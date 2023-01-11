@@ -64,4 +64,16 @@ public class PersonService {
         person.addBasket(new Basket());
         return personRepository.save(person);
     }
+
+
+    public Person deletePerson(Long id) {
+        return deleteById(id);
+    }
+
+    private Person deleteById(Long id){
+        var person = personRepository.findById(id)
+                .orElseThrow(()->new NotFoundException("Cannot find person by id: "+id));
+        personRepository.deleteById(id);
+        return person;
+    }
 }

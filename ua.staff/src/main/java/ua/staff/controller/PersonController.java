@@ -51,4 +51,13 @@ public class PersonController {
                 .build();
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Person> updatePerson(@PathVariable("id")Long id) {
+        var person = personService.deletePerson(id);
+        var location = UriBuilder.createUriFromCurrentServletMapping("/people");
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(location)
+                .body(person);
+    }
 }
