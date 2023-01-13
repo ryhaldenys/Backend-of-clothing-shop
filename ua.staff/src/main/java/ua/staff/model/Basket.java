@@ -21,7 +21,7 @@ public class Basket {
     private Long id;
 
     @MapsId
-    @OneToOne(optional = false)
+    @OneToOne(optional = false,fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id")
     @JsonManagedReference
     private Person person;

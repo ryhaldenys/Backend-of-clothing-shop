@@ -10,7 +10,10 @@ import ua.staff.dto.PersonRolesDto;
 import ua.staff.exception.NotFoundException;
 import ua.staff.model.Basket;
 import ua.staff.model.Person;
+import ua.staff.model.PostAddress;
 import ua.staff.repository.PersonRepository;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -61,6 +64,8 @@ public class PersonService {
 
     @Transactional
     public Person savePerson(Person person) {
+
+        //todo: encrypt password
         person.addBasket(new Basket());
         return personRepository.save(person);
     }
@@ -75,5 +80,10 @@ public class PersonService {
                 .orElseThrow(()->new NotFoundException("Cannot find person by id: "+id));
         personRepository.deleteById(id);
         return person;
+    }
+
+    public PostAddress getPostAddressById(Long id) {
+        return personRepository.findPostAddressById(id)
+                .orElseThrow(()->new NotFoundException("Cannot find person's post adress by id: "+id));
     }
 }

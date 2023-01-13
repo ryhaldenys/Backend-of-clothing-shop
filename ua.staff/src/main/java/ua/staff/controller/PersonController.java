@@ -10,6 +10,7 @@ import ua.staff.builder.UriBuilder;
 import ua.staff.dto.PeopleDto;
 import ua.staff.dto.PersonRolesDto;
 import ua.staff.model.Person;
+import ua.staff.model.PostAddress;
 import ua.staff.service.PersonService;
 
 
@@ -52,7 +53,7 @@ public class PersonController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Person> updatePerson(@PathVariable("id")Long id) {
+    public ResponseEntity<Person> deletePerson(@PathVariable("id")Long id) {
         var person = personService.deletePerson(id);
         var location = UriBuilder.createUriFromCurrentServletMapping("/people");
 
@@ -60,4 +61,10 @@ public class PersonController {
                 .location(location)
                 .body(person);
     }
+
+    @GetMapping("/{id}/address")
+    public PostAddress getAddress(@PathVariable Long id){
+        return personService.getPostAddressById(id);
+    }
 }
+

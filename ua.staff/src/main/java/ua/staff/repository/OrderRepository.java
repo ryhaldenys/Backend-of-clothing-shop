@@ -12,10 +12,24 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order,Long> {
 
-    @Query("select new ua.staff.dto.AllOrdersDto(o.id,o.orderNumber,o.totalPrice,o.usedBonuses,o.created_at,o.status)" +
+    @Query("select new ua.staff.dto.AllOrdersDto(o.id,o.orderNumber,o.totalPrice,o.usedBonuses,o.createdAt,o.status)" +
            " from Order o where o.person.id =?1")
     Slice<AllOrdersDto> findAllByPersonId(Long personId);
 
-    @Query("select new ua.staff.dto.OrderDto(o.id,o.orderNumber,o.totalPrice,o.status,o.usedBonuses,o.created_at) from Order o where o.id=?1")
+    @Query("select new ua.staff.dto.OrderDto(o.id,o.orderNumber,o.totalPrice," +
+            "o.status,o.usedBonuses,o.createdAt,o.personFullName,o.deliveryInfo.address," +
+            "o.deliveryInfo.deliveryType,o.deliveryInfo.deliveryPrice,o.deliveryInfo.paymentKind) " +
+            "from Order o " +
+            "where o.id=?1")
     Optional<OrderDto> findOrderById(Long id);
+
+
+
+    @Query("select new ua.staff.dto.AllOrdersDto(o.id,o.orderNumber,o.totalPrice,o.usedBonuses,o.createdAt,o.status)" +
+            " from Order o")
+    Slice<AllOrdersDto> findAllOrders();
+
+    @Query("select o from Order o join fetch o.choseClothes cc join fetch cc.clothes c")
+    Optional<Order> findOrderByIdJoinFetchChoseClothesJoinFetchClothes(Long id);
+
 }

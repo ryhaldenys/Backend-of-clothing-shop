@@ -77,6 +77,15 @@ public class ClothesController {
         return createResponseEntity(NO_CONTENT,location);
     }
 
+    @PostMapping("/{id}/size")
+    public ResponseEntity<Clothes> addSize(@PathVariable Long id, @RequestBody Size size){
+
+        clothesService.addSize(id,size);
+        var location = buildClothesLocation(id);
+
+        return createResponseEntity(NO_CONTENT,location);
+    }
+
     @DeleteMapping("/{id}/size")
     public ResponseEntity<Clothes> removeSize(@PathVariable Long id, @RequestBody Size size){
 
@@ -86,14 +95,6 @@ public class ClothesController {
         return createResponseEntity(NO_CONTENT,location);
     }
 
-    @PostMapping("/{id}/size")
-    public ResponseEntity<Clothes> addSize(@PathVariable Long id, @RequestBody Size size){
-
-        clothesService.addSize(id,size);
-        var location = buildClothesLocation(id);
-
-        return createResponseEntity(NO_CONTENT,location);
-    }
 
 
     private URI buildClothesLocation(Long id) {

@@ -1,6 +1,7 @@
 package ua.staff.builder;
 
 import ua.staff.model.ChoseClothes;
+import ua.staff.model.Delivery;
 import ua.staff.model.Order;
 import ua.staff.model.Person;
 
@@ -13,10 +14,12 @@ import static ua.staff.model.Order.Status.*;
 public class OrderBuilder {
     private String orderNumber;
     private BigDecimal totalPrice;
+    private String personFullName;
     private Order.Status status = NEW;
     private BigDecimal usedBonuses;
     private Person person;
     private List<ChoseClothes> choseClothes = new ArrayList<>();
+    private Delivery delivery;
 
     private OrderBuilder(){}
 
@@ -31,6 +34,11 @@ public class OrderBuilder {
 
     public OrderBuilder totalPrice(BigDecimal totalPrice){
         this.totalPrice = totalPrice;
+        return this;
+    }
+
+    public OrderBuilder personFullName(String personFullName){
+        this.personFullName = personFullName;
         return this;
     }
 
@@ -54,8 +62,13 @@ public class OrderBuilder {
         return this;
     }
 
+    public OrderBuilder delivery(Delivery delivery) {
+        this.delivery = delivery;
+        return this;
+    }
+
     public Order build(){
-        return new Order(orderNumber,totalPrice,status,usedBonuses,person,choseClothes);
+        return new Order(orderNumber,totalPrice,personFullName,status,usedBonuses,person,choseClothes,delivery);
     }
 
 }

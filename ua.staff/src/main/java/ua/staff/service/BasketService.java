@@ -127,13 +127,12 @@ public class BasketService {
     private void addBonusesToBasket(Person person, BigDecimal totalPrice) {
         var personBonuses = person.getBonuses();
         var basket = person.getBasket();
+        var halfPrice = totalPrice.divideAndRemainder(valueOf(2))[0];
 
-        if (totalPrice.compareTo(personBonuses) < 0){
-            basket.setUsedBonuses(totalPrice.subtract(valueOf(2)));
-        }else {
-            basket.setUsedBonuses(person.getBonuses());
-        }
+        if (personBonuses.compareTo(halfPrice) > 0)
+            basket.setUsedBonuses(halfPrice);
+
+        basket.setUsedBonuses(personBonuses);
 
     }
-
 }

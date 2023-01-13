@@ -29,10 +29,7 @@ public interface ClothesRepository extends JpaRepository<Clothes,Long>,CustomClo
     @Query("select c.sizes from Clothes c join c.sizes s where c.id = ?1 and s.size =?2")
     Optional<Size> findSizeByClothesIdAndSizeType(Long clothesId, String size);
 
-    @Query("select s from Clothes c join c.sizes s where c.id =?1 and s.size =?2")
-    void getSizeByClothesIdAndSizeKind(Long clothesId,String size);
-
     @Modifying
     @Query(value ="update clothes_sizes cs set amount =?1 where cs.clothes_id=?2 and cs.size =?3" ,nativeQuery = true)
-    void updateAmountOfSizes(int i,long clothes_id,String sizeKind);
+    void updateAmountOfSizes(int amount,long clothes_id,String sizeKind);
 }

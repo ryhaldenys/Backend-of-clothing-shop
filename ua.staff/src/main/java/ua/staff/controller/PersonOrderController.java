@@ -16,7 +16,7 @@ import ua.staff.service.OrderService;
 @RestController
 @RequestMapping("/people/{person_id}/orders")
 @RequiredArgsConstructor
-public class OrderController {
+public class PersonOrderController {
     private final OrderRepository orderRepository;
     private final OrderService orderService;
 
@@ -40,12 +40,9 @@ public class OrderController {
                 .build();
     }
 
-    // todo: create method add status RECEIVED
-    //todo: create method add status CANCELED
-    //todo: create method getAllOrders
-    //todo: create method getOrder by orderNumber;
-    //todo: create OrderController
-
-    //todo: add cache to basket and history of orders
+    @PatchMapping("/{order_id}")
+    public void setStatusCanceled(@PathVariable("order_id")Long orderId){
+        orderService.setStatusCanceledByOrderId(orderId);
+    }
 
 }

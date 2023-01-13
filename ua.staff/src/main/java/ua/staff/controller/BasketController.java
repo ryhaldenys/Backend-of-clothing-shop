@@ -51,4 +51,8 @@ public class BasketController {
     public void addPersonBonuses(@PathVariable Long person_id){
         basketService.addBonuses(person_id);
     }
+
+    //todo: remove person bonuses
+    //todo: remove choseClothes
+
 }
