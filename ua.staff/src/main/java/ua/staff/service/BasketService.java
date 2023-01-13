@@ -131,8 +131,28 @@ public class BasketService {
 
         if (personBonuses.compareTo(halfPrice) > 0)
             basket.setUsedBonuses(halfPrice);
-
-        basket.setUsedBonuses(personBonuses);
+        else
+            basket.setUsedBonuses(personBonuses);
 
     }
+
+    public void removePersonBonuses(Long personId) {
+        var basket = getBasket(personId);
+        removeBonuses(basket);
+    }
+
+    private Basket getBasket(Long id){
+        return basketRepository.findById(id)
+                .orElseThrow(()->new NotFoundException("Cannot find basket by id:"+id));
+
+    }
+    private void removeBonuses(Basket basket){
+        basket.setUsedBonuses(ZERO);
+    }
+
+
+    public void removeChoseClothesById(Long choseClothesId) {
+        choseClothesRepository.deleteById(choseClothesId);
+    }
 }
+

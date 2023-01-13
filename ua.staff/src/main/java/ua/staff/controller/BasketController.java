@@ -35,6 +35,18 @@ public class BasketController {
                 .build();
     }
 
+    @DeleteMapping("/{chose_clothes_id}")
+    public ResponseEntity<Void> removeChoseClothes(@PathVariable("person_id")Long personId,
+            @PathVariable("chose_clothes_id")Long choseClothesId){
+
+        basketService.removeChoseClothesById(choseClothesId);
+
+        var location = UriBuilder.createUriFromCurrentServletMapping("/people/{p_id}/basket",personId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(location)
+                .build();
+    }
+
     @PatchMapping("/{chose_clothes_id}")
     public ResponseEntity<Void> updateAmountOfClothes(
             @RequestBody Size size, @PathVariable Long person_id,@PathVariable Long chose_clothes_id){
@@ -48,11 +60,26 @@ public class BasketController {
     }
 
     @PatchMapping
-    public void addPersonBonuses(@PathVariable Long person_id){
-        basketService.addBonuses(person_id);
+    public ResponseEntity<Void> addPersonBonuses(@PathVariable("person_id") Long personId){
+        basketService.addBonuses(personId);
+
+        var location = UriBuilder.createUriFromCurrentRequest();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(location)
+                .build();
     }
 
-    //todo: remove person bonuses
+    @DeleteMapping
+    public ResponseEntity<Void> removePersonBonuses(@PathVariable("person_id") Long personId){
+
+        basketService.removePersonBonuses(personId);
+
+        var location = UriBuilder.createUriFromCurrentRequest();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(location)
+                .build();
+    }
     //todo: remove choseClothes
+
 
 }

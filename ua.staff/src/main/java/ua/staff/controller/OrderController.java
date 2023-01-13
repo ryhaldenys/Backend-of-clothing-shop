@@ -26,10 +26,8 @@ public class OrderController {
     }
 
 
-    // todo: create method add status RECEIVED
-    //todo: create method add status CANCELED
+    //todo: create method add status RECEIVED
     //todo: create method getOrder by orderNumber;
-
 
     //todo: add cache to basket and history of orders
 }
