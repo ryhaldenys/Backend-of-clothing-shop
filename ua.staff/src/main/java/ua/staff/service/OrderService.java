@@ -16,6 +16,7 @@ import ua.staff.repository.ClothesRepository;
 import ua.staff.repository.OrderRepository;
 import ua.staff.repository.PersonRepository;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 @Transactional
@@ -101,23 +102,43 @@ public class OrderService {
 
 
     public void setStatusCanceledByOrderId(Long orderId) {
-        var order = orderRepository.findOrderByIdJoinFetchChoseClothesJoinFetchClothes(orderId)
+        var order = getOrderFetchChoseClothesFetchClothes(orderId);
+        var personBonuses = getPersonBonuses(orderId);
+        updatePersonBonuses(personBonuses,order);
+
+        returnClothes(order);
+        setStatusCanceled(order);
+    }
+
+    private Order getOrderFetchChoseClothesFetchClothes(Long orderId){
+        return orderRepository.findOrderByIdJoinFetchChoseClothesJoinFetchClothes(orderId)
                 .orElseThrow(()->new NotFoundException("Cannot find an order by id: "+orderId));
 
-        var personBonuses = personRepository.findPersonBonusesByOrderId(orderId)
+    }
+
+    private BigDecimal getPersonBonuses(Long orderId){
+        return personRepository.findPersonBonusesByOrderId(orderId)
                 .orElseThrow(()->new NotFoundException("Cannot find person's bonuses by orderId: "+orderId));
+    }
 
-        personRepository.updatePersonBonusesByOrderId(personBonuses.add(order.getUsedBonuses()),orderId);
+    private void updatePersonBonuses(BigDecimal personBonuses, Order order){
+        var addedBonuses = personBonuses.add(order.getUsedBonuses());
+        personRepository.updatePersonBonusesByOrderId(addedBonuses,order.getId());
+    }
 
-        order.getChoseClothes()
-                .forEach((c)->
-                {
-                    var sizeKind = c.getSizeKind();
-                    var amountOfClothes = c.getAmountOfClothes();
-                    var size = clothesRepository.findSizeByClothesIdAndSizeType(c.getClothes().getId(),sizeKind).orElseThrow();
-                    clothesRepository.updateAmountOfSizes(size.getAmount()+amountOfClothes,c.getClothes().getId(),sizeKind);
-                });
 
+    private void returnClothes(Order order) {
+        order.getChoseClothes().forEach(this::updateAmountOfClothes);
+    }
+
+    private void updateAmountOfClothes(ChoseClothes choseClothes) {
+        var sizeKind = choseClothes.getSizeKind();
+        var amountOfClothes = choseClothes.getAmountOfClothes();
+        var size = clothesRepository.findSizeByClothesIdAndSizeType(choseClothes.getClothes().getId(),sizeKind).orElseThrow();
+        clothesRepository.updateAmountOfSizes(size.getAmount()+amountOfClothes,choseClothes.getClothes().getId(),sizeKind);
+    }
+
+    private void setStatusCanceled(Order order){
         order.setStatus(Order.Status.CANCELLED);
     }
 }
