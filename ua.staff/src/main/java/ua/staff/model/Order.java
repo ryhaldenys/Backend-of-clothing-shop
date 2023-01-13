@@ -28,7 +28,10 @@ public class Order {
     private String orderNumber;
 
     @Column(nullable = false)
-    private LocalDateTime created_at = LocalDateTime.now();
+    private String personFullName;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(nullable = false)
     private BigDecimal totalPrice;
@@ -38,19 +41,33 @@ public class Order {
     private Status status = NEW;
 
     public enum Status{
-        NEW,CANCELLED,RECEIVED
+        NEW,CANCELLED,RECEIVED,
     }
 
     private BigDecimal usedBonuses;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id")
     private Person person;
-
 
     @Setter(AccessLevel.PRIVATE)
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<ChoseClothes> choseClothes = new ArrayList<>();
+
+    @Embedded
+    private Delivery deliveryInfo;
+
+    public Order(String orderNumber, BigDecimal totalPrice,String personFullName,
+                 Status status, BigDecimal usedBonuses, Person person, List<ChoseClothes> choseClothes,Delivery deliveryInfo) {
+        this.orderNumber = orderNumber;
+        this.totalPrice = totalPrice;
+        this.personFullName = personFullName;
+        this.status = status;
+        this.usedBonuses = usedBonuses;
+        this.person = person;
+        this.choseClothes = choseClothes;
+        this.deliveryInfo = deliveryInfo;
+    }
 
     public void addBonusesToTotalPrice() {
         totalPrice = totalPrice.subtract(usedBonuses);
@@ -71,12 +88,4 @@ public class Order {
         choseClothes.forEach(c -> c.setOrder(this));
     }
 
-    public Order(String orderNumber, BigDecimal totalPrice, Status status, BigDecimal usedBonuses, Person person, List<ChoseClothes> choseClothes) {
-        this.orderNumber = orderNumber;
-        this.totalPrice = totalPrice;
-        this.status = status;
-        this.usedBonuses = usedBonuses;
-        this.person = person;
-        this.choseClothes = choseClothes;
-    }
 }
