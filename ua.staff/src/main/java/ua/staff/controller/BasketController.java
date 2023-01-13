@@ -79,7 +79,4 @@ public class BasketController {
                 .location(location)
                 .build();
     }
-    //todo: remove choseClothes
-
-
 }

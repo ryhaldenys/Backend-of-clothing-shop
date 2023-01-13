@@ -17,7 +17,6 @@ import ua.staff.repository.OrderRepository;
 import ua.staff.repository.PersonRepository;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 
 @Transactional
 @Service
@@ -45,8 +44,7 @@ public class OrderService {
 
     private Order createOrder(Person person,Delivery delivery){
         var totalPrice = choseClothesRepository.getTotalPriceOfChoseClothesByBasketId(person.getId())
-                .orElseThrow();
-
+                .orElseThrow(()->new NotFoundException("Cannot find total price of chose clothes by basket id: "+person.getId()));
         var basket  = person.getBasket();
 
         var order = OrderBuilder.builder()

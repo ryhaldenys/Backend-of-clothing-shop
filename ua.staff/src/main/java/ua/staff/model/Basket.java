@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,7 +27,8 @@ public class Basket {
     @JsonManagedReference
     private Person person;
 
-    private BigDecimal usedBonuses;
+    @ColumnDefault("0")
+    private BigDecimal usedBonuses = BigDecimal.ZERO;
 
     private BigDecimal totalPrice;
 
