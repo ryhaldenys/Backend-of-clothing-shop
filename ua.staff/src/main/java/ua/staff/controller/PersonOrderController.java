@@ -12,6 +12,9 @@ import ua.staff.model.Delivery;
 import ua.staff.repository.OrderRepository;
 import ua.staff.service.OrderService;
 
+import static org.springframework.http.HttpStatus.CREATED;
+import static ua.staff.generator.ResponseEntityGenerator.getResponseEntity;
+
 
 @RestController
 @RequestMapping("/people/{person_id}/orders")
@@ -34,10 +37,7 @@ public class PersonOrderController {
     public ResponseEntity<Void> createOrder(@PathVariable Long person_id, @RequestBody Delivery delivery){
         orderService.createOrder(person_id,delivery);
         var location = UriBuilder.createUriFromCurrentRequest();
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .location(location)
-                .build();
+        return getResponseEntity(location, CREATED);
     }
 
     @PatchMapping("/{order_id}")

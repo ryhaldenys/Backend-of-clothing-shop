@@ -9,9 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import ua.staff.builder.UriBuilder;
 import ua.staff.dto.PeopleDto;
 import ua.staff.dto.PersonRolesDto;
+import ua.staff.generator.ResponseEntityGenerator;
 import ua.staff.model.Person;
 import ua.staff.model.PostAddress;
 import ua.staff.service.PersonService;
+
+import static org.springframework.http.HttpStatus.*;
+import static ua.staff.generator.ResponseEntityGenerator.*;
 
 
 @RestController
@@ -35,31 +39,23 @@ public class PersonController {
         personService.savePerson(person);
 
         var location = UriBuilder.createUriFromCurrentServletMapping("people/{id}",person.getId());
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .location(location)
-                .body(person);
+        return getResponseEntity(location, CREATED,person);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Person> updatePerson(@PathVariable("id")Long id, @RequestBody Person person){
+    public ResponseEntity<Void> updatePerson(@PathVariable("id")Long id, @RequestBody Person person){
         personService.updatePerson(id,person);
 
         var location = UriBuilder.createUriFromCurrentRequest();
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(location)
-                .build();
+        return getResponseEntityWithNoContent(location);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Person> deletePerson(@PathVariable("id")Long id) {
         var person = personService.deletePerson(id);
-        var location = UriBuilder.createUriFromCurrentServletMapping("/people");
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(location)
-                .body(person);
+        var location = UriBuilder.createUriFromCurrentServletMapping("/people");
+        return getResponseEntity(location, CREATED,person);
     }
 
     @GetMapping("/{id}/address")

@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import ua.staff.builder.UriBuilder;
 import ua.staff.dto.AllOrdersDto;
 import ua.staff.dto.OrderDto;
+import ua.staff.generator.ResponseEntityGenerator;
 import ua.staff.repository.OrderRepository;
 import ua.staff.service.OrderService;
 
 import static org.springframework.http.HttpStatus.*;
+import static ua.staff.generator.ResponseEntityGenerator.getResponseEntityWithNoContent;
 
 @RestController
 @RequestMapping("/orders")
@@ -34,9 +36,7 @@ public class OrderController {
         orderService.setStatusReceivedByOrderId(id);
 
         var location = UriBuilder.createUriFromCurrentRequest();
-        return ResponseEntity.status(NO_CONTENT)
-                .location(location)
-                .build();
+        return getResponseEntityWithNoContent(location);
     }
 
     //todo: create method getOrder by orderNumber;

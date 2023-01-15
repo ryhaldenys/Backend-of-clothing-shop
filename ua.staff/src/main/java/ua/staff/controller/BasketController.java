@@ -6,8 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.staff.builder.UriBuilder;
 import ua.staff.dto.BasketDto;
+import ua.staff.generator.ResponseEntityGenerator;
 import ua.staff.model.Size;
 import ua.staff.service.BasketService;
+
+import java.net.URI;
+
+import static ua.staff.generator.ResponseEntityGenerator.getResponseEntityWithNoContent;
 
 @RestController
 @RequestMapping("/people/{person_id}/basket")
@@ -27,9 +32,7 @@ public class BasketController {
 
         basketService.addClothesToBasket(person_id,clothes_id,size);
         var location = UriBuilder.createUriFromCurrentServletMapping("/people/{p_id}/basket",person_id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(location)
-                .build();
+        return getResponseEntityWithNoContent(location);
     }
 
     @DeleteMapping("/{chose_clothes_id}")
@@ -39,9 +42,7 @@ public class BasketController {
         basketService.removeChoseClothesById(choseClothesId);
 
         var location = UriBuilder.createUriFromCurrentServletMapping("/people/{p_id}/basket",personId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(location)
-                .build();
+        return getResponseEntityWithNoContent(location);
     }
 
     @PatchMapping("/{chose_clothes_id}")
@@ -51,9 +52,7 @@ public class BasketController {
         basketService.updateAmountOfClothes(chose_clothes_id,person_id,size);
 
         var location = UriBuilder.createUriFromCurrentServletMapping("/people/{p_id}/basket",person_id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(location)
-                .build();
+        return getResponseEntityWithNoContent(location);
     }
 
     @PatchMapping
@@ -61,9 +60,7 @@ public class BasketController {
         basketService.addBonuses(personId);
 
         var location = UriBuilder.createUriFromCurrentRequest();
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(location)
-                .build();
+        return getResponseEntityWithNoContent(location);
     }
 
     @DeleteMapping
@@ -72,8 +69,7 @@ public class BasketController {
         basketService.removePersonBonuses(personId);
 
         var location = UriBuilder.createUriFromCurrentRequest();
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(location)
-                .build();
+        return getResponseEntityWithNoContent(location);
     }
+
 }
