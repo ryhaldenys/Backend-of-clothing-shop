@@ -149,13 +149,25 @@ public class OrderService {
 
 
     public void setStatusReceivedByOrderId(Long id) {
-        var order = orderRepository.findOrderByIdFetchPerson(id).orElseThrow();
-        var person = order.getPerson();
+        var order = getOrderFetchPerson(id);
+        setStatusReceived(order);
+        addBonusesToUser(order);
+    }
+
+    private Order getOrderFetchPerson(Long id){
+        return orderRepository.findOrderByIdFetchPerson(id)
+                .orElseThrow(()->new NotFoundException("Cannot find order by id: "+id));
+    }
+
+    private void setStatusReceived(Order order) {
         if (order.getStatus().equals(NEW))
             order.setStatus(RECEIVED);
         else
             throw new IllegalStateException("Cannot chane status "+order.getStatus()+" to "+RECEIVED);
+    }
 
+    private void addBonusesToUser(Order order) {
+        var person = order.getPerson();
         var totalPrice = order.getTotalPrice().add(order.getUsedBonuses());
         var bonuses = totalPrice.multiply(BONUS_PERCENTAGE);
         bonuses = bonuses.setScale(0, HALF_UP);
