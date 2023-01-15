@@ -7,16 +7,17 @@ import ua.staff.builder.OrderBuilder;
 import ua.staff.dto.OrderDto;
 import ua.staff.exception.NotFoundException;
 import ua.staff.generator.OrderNumberGenerator;
-import ua.staff.model.ChoseClothes;
-import ua.staff.model.Delivery;
-import ua.staff.model.Order;
-import ua.staff.model.Person;
+import ua.staff.model.*;
 import ua.staff.repository.ChoseClothesRepository;
 import ua.staff.repository.ClothesRepository;
 import ua.staff.repository.OrderRepository;
 import ua.staff.repository.PersonRepository;
 
 import java.math.BigDecimal;
+
+import static java.math.BigDecimal.valueOf;
+import static java.math.RoundingMode.*;
+import static ua.staff.model.Order.Status.*;
 
 @Transactional
 @Service
@@ -26,6 +27,8 @@ public class OrderService {
     private final ChoseClothesRepository choseClothesRepository;
     private final PersonRepository personRepository;
     private final ClothesRepository clothesRepository;
+
+    private final BigDecimal BONUS_PERCENTAGE = valueOf(0.03);
 
 
     public void createOrder(Long personId, Delivery delivery){
@@ -43,7 +46,7 @@ public class OrderService {
     }
 
     private Order createOrder(Person person,Delivery delivery){
-        var totalPrice = choseClothesRepository.getTotalPriceOfChoseClothesByBasketId(person.getId())
+        var totalPrice = choseClothesRepository.findTotalPriceOfChoseClothesByBasketId(person.getId())
                 .orElseThrow(()->new NotFoundException("Cannot find total price of chose clothes by basket id: "+person.getId()));
         var basket  = person.getBasket();
 
@@ -132,11 +135,31 @@ public class OrderService {
     private void updateAmountOfClothes(ChoseClothes choseClothes) {
         var sizeKind = choseClothes.getSizeKind();
         var amountOfClothes = choseClothes.getAmountOfClothes();
-        var size = clothesRepository.findSizeByClothesIdAndSizeType(choseClothes.getClothes().getId(),sizeKind).orElseThrow();
-        clothesRepository.updateAmountOfSizes(size.getAmount()+amountOfClothes,choseClothes.getClothes().getId(),sizeKind);
+        var clothesId = choseClothes.getClothes().getId();
+        var size = clothesRepository.findSizeByClothesIdAndSizeType(clothesId,sizeKind).orElseThrow();
+        clothesRepository.updateAmountOfSizes(size.getAmount()+amountOfClothes,clothesId,sizeKind);
     }
 
     private void setStatusCanceled(Order order){
-        order.setStatus(Order.Status.CANCELLED);
+        if (order.getStatus().equals(NEW))
+            order.setStatus(CANCELLED);
+        else
+            throw new IllegalStateException("Cannot chane status "+order.getStatus()+"to "+CANCELLED);
+    }
+
+
+    public void setStatusReceivedByOrderId(Long id) {
+        var order = orderRepository.findOrderByIdFetchPerson(id).orElseThrow();
+        var person = order.getPerson();
+        if (order.getStatus().equals(NEW))
+            order.setStatus(RECEIVED);
+        else
+            throw new IllegalStateException("Cannot chane status "+order.getStatus()+"to "+RECEIVED);
+
+        var totalPrice = order.getTotalPrice().add(order.getUsedBonuses());
+        var bonuses = totalPrice.multiply(BONUS_PERCENTAGE);
+        bonuses = bonuses.setScale(0, HALF_UP);
+
+        person.setBonuses(person.getBonuses().add(bonuses));
     }
 }

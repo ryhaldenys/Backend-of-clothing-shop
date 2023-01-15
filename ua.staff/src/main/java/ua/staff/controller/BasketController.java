@@ -4,13 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.service.annotation.PatchExchange;
 import ua.staff.builder.UriBuilder;
 import ua.staff.dto.BasketDto;
 import ua.staff.model.Size;
 import ua.staff.service.BasketService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/people/{person_id}/basket")

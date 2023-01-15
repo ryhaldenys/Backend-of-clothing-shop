@@ -120,7 +120,7 @@ public class BasketService {
     }
 
     private BigDecimal getTotalPriceOfClothes(Long personId) {
-        return choseClothesRepository.getTotalPriceOfChoseClothesByBasketId(personId)
+        return choseClothesRepository.findTotalPriceOfChoseClothesByBasketId(personId)
                 .orElseThrow(() -> new NotFoundException("Cannot find any clothes prices and  discounts by basket id: " + personId));
     }
 

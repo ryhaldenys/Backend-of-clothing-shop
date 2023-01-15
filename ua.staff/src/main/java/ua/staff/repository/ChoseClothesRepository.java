@@ -30,7 +30,10 @@ public interface ChoseClothesRepository extends JpaRepository<ChoseClothes,Long>
     List<ChoseClothesDto> findAllByOrderId(Long orderId);
 
     @Query("select sum(c.amountOfClothes*(cl.price - (cl.price*cl.discount))) as totalPrice from ChoseClothes c join c.clothes cl where c.basket.id = ?1")
-    Optional<BigDecimal> getTotalPriceOfChoseClothesByBasketId(Long basketId);
+    Optional<BigDecimal> findTotalPriceOfChoseClothesByBasketId(Long basketId);
+
+    @Query("select sum(cc.amountOfClothes*(cl.price - (cl.price*cl.discount))) as totalPrice from ChoseClothes cc join cc.clothes cl where cc.id = ?1")
+    Optional<BigDecimal> findTotalPriceOfChoseClothesById(Long id);
 
 //    @Query("select cl.id from ChoseClothes c join c.clothes cl where c.id=?1")
 //    Long findClothesIdByChoseClothesId(Long id);

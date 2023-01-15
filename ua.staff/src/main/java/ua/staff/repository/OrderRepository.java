@@ -23,13 +23,13 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
             "where o.id=?1")
     Optional<OrderDto> findOrderById(Long id);
 
-
-
     @Query("select new ua.staff.dto.AllOrdersDto(o.id,o.orderNumber,o.totalPrice,o.usedBonuses,o.createdAt,o.status)" +
             " from Order o")
     Slice<AllOrdersDto> findAllOrders();
 
-    @Query("select o from Order o join fetch o.choseClothes cc join fetch cc.clothes c")
+    @Query("select o from Order o join fetch o.choseClothes cc join fetch cc.clothes where o.id=?1")
     Optional<Order> findOrderByIdJoinFetchChoseClothesJoinFetchClothes(Long id);
 
+    @Query("select o from Order o left join fetch o.person where o.id=?1")
+    Optional<Order> findOrderByIdFetchPerson(Long id);
 }
