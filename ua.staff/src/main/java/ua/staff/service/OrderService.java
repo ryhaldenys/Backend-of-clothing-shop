@@ -144,7 +144,7 @@ public class OrderService {
         if (order.getStatus().equals(NEW))
             order.setStatus(CANCELLED);
         else
-            throw new IllegalStateException("Cannot chane status "+order.getStatus()+"to "+CANCELLED);
+            throw new IllegalStateException("Cannot chane status "+order.getStatus()+" to "+CANCELLED);
     }
 
 
@@ -154,7 +154,7 @@ public class OrderService {
         if (order.getStatus().equals(NEW))
             order.setStatus(RECEIVED);
         else
-            throw new IllegalStateException("Cannot chane status "+order.getStatus()+"to "+RECEIVED);
+            throw new IllegalStateException("Cannot chane status "+order.getStatus()+" to "+RECEIVED);
 
         var totalPrice = order.getTotalPrice().add(order.getUsedBonuses());
         var bonuses = totalPrice.multiply(BONUS_PERCENTAGE);

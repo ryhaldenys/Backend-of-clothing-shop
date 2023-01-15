@@ -80,8 +80,6 @@ public class BasketService {
         var foundSize = getSizeByIdAndSizeType(choseClothes.getClothes().getId(),size.getSize());
 
         checkIsEnoughClothes(foundSize,size.getAmount());
-
-
         updateAmountOfClothes(choseClothes,size);
     }
 
@@ -98,7 +96,7 @@ public class BasketService {
     private void checkIsEnoughClothes(Size size, Integer amountOfClothes) {
         if (amountOfClothes > size.getAmount()){
             throw new ToManyChoseClothesException("You chose to many clothes: "
-                                                  +amountOfClothes +",choose less than: "+size.getAmount());
+                                                  +amountOfClothes +", choose less than: "+size.getAmount());
         }
     }
 
