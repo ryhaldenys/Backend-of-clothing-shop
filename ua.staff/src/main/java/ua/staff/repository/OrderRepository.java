@@ -7,13 +7,12 @@ import ua.staff.dto.AllOrdersDto;
 import ua.staff.dto.OrderDto;
 import ua.staff.model.Order;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order,Long> {
 
     @Query("select new ua.staff.dto.AllOrdersDto(o.id,o.orderNumber,o.totalPrice,o.usedBonuses,o.createdAt,o.status)" +
-           " from Order o where o.person.id =?1")
+           " from Order o join o.person p where p.id =?1")
     Slice<AllOrdersDto> findAllByPersonId(Long personId);
 
     @Query("select new ua.staff.dto.OrderDto(o.id,o.orderNumber,o.totalPrice," +
@@ -27,9 +26,9 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
             " from Order o")
     Slice<AllOrdersDto> findAllOrders();
 
-    @Query("select o from Order o join fetch o.choseClothes cc join fetch cc.clothes where o.id=?1")
-    Optional<Order> findOrderByIdJoinFetchChoseClothesJoinFetchClothes(Long id);
+    @Query("select o from Order o join fetch o.choseClothes cc join fetch cc.clothes where o.person.id=?1 and o.id=?2")
+    Optional<Order> findOrderByIdJoinFetchChoseClothesJoinFetchClothes(Long personId,Long orderId);
 
-    @Query("select o from Order o left join fetch o.person where o.id=?1")
-    Optional<Order> findOrderByIdFetchPerson(Long id);
+    @Query("select o from Order o left join fetch o.person p where p.id=?1 and o.id=?2")
+    Optional<Order> findOrderByIdFetchPerson(Long personId,Long orderId);
 }

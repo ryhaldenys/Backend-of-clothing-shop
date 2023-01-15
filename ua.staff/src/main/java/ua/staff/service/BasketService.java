@@ -1,6 +1,8 @@
 package ua.staff.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.staff.dto.BasketDto;
@@ -26,14 +28,16 @@ public class BasketService {
     private final BasketRepository basketRepository;
     private final PersonRepository personRepository;
 
-    public BasketDto getBasketElements(Long id){
-        var basketDtos = basketRepository.findBasketIdAndUsedBonusesById(id);
-        var choseClothes = choseClothesRepository.findAllByBasketId(id);
+    @Cacheable(value = "basket",key = "#personId")
+    public BasketDto getBasketElements(Long personId){
+        System.out.println("cache was not used in basket service");
+        var basketDtos = basketRepository.findBasketIdAndUsedBonusesById(personId);
+        var choseClothes = choseClothesRepository.findAllByBasketId(personId);
         basketDtos.setClothes(choseClothes);
         return basketDtos;
     }
 
-
+    @CacheEvict(value = "basket",key = "#personId")
     public void addClothesToBasket(Long personId, Long clothesId, Size size){
         var basket = getPersonsBasket(personId);
         var foundClothes = getClothes(clothesId);
@@ -74,7 +78,7 @@ public class BasketService {
 
 
 
-
+    @CacheEvict(value = "basket",key = "#personId")
     public void updateAmountOfClothes(Long clothesId,Long personId,Size size) {
         var choseClothes = getChoseClothesByClothesAndPersonIds(clothesId,personId);
         var foundSize = getSizeByIdAndSizeType(choseClothes.getClothes().getId(),size.getSize());
@@ -105,7 +109,7 @@ public class BasketService {
     }
 
 
-
+    @CacheEvict(value = "basket",key = "#personId")
     public void addBonuses(Long personId) {
         var person = getPersonAndPersonsBasket(personId);
         var totalPrice = getTotalPriceOfClothes(personId);
@@ -134,6 +138,7 @@ public class BasketService {
 
     }
 
+    @CacheEvict(value = "basket",key = "#personId")
     public void removePersonBonuses(Long personId) {
         var basket = getBasket(personId);
         removeBonuses(basket);

@@ -1,16 +1,12 @@
 package ua.staff.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.staff.builder.UriBuilder;
 import ua.staff.dto.BasketDto;
-import ua.staff.generator.ResponseEntityGenerator;
 import ua.staff.model.Size;
 import ua.staff.service.BasketService;
-
-import java.net.URI;
 
 import static ua.staff.generator.ResponseEntityGenerator.getResponseEntityWithNoContent;
 
@@ -21,7 +17,7 @@ public class BasketController {
     private final BasketService basketService;
 
     @GetMapping
-    public BasketDto getChoseClothes(@PathVariable Long person_id){
+    public BasketDto getBasket(@PathVariable Long person_id){
         return basketService.getBasketElements(person_id);
     }
 

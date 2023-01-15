@@ -37,15 +37,14 @@ public interface PersonRepository extends JpaRepository<Person,Long> {
     @Query("select p.postAddress from Person p where p.id=?1")
     Optional<PostAddress> findPostAddressById(Long id);
 
-    @Query("SELECT p.bonuses from Person p join p.orders o where o.id =?1")
-    Optional<BigDecimal> findPersonBonusesByOrderId(Long orderId);
+    @Query("SELECT p.bonuses from Person p where p.id =?1")
+    Optional<BigDecimal> findPersonBonusesById(Long orderId);
 
     @Modifying
     @Query(value =
             "update person " +
             "set bonuses =:bonuses " +
-            "from person_order po " +
-            "where po.person_id = person.id and po.id =:id",nativeQuery = true)
-    void updatePersonBonusesByOrderId(@Param("bonuses") BigDecimal bonuses,@Param("id") Long orderId);
+            "where id =:id",nativeQuery = true)
+    void updatePersonBonusesByOrderId(@Param("bonuses") BigDecimal bonuses,@Param("id") Long id);
 }
 

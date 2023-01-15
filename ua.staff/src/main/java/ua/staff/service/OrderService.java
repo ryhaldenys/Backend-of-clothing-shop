@@ -1,9 +1,14 @@
 package ua.staff.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.staff.builder.OrderBuilder;
+import ua.staff.dto.AllOrdersDto;
 import ua.staff.dto.OrderDto;
 import ua.staff.exception.NotFoundException;
 import ua.staff.generator.OrderNumberGenerator;
@@ -31,6 +36,15 @@ public class OrderService {
     private final BigDecimal BONUS_PERCENTAGE = valueOf(0.03);
 
 
+    @Cacheable(value = "person_orders", key = "#personId")
+    public Slice<AllOrdersDto> getAllOrders(Long personId){
+        System.out.println("cache was not used in order service");
+        return orderRepository.findAllByPersonId(personId);
+    }
+
+    @Caching(evict = {
+            @CacheEvict(value = "person_orders",key = "#personId"),
+            @CacheEvict(value = "all_orders",allEntries = true)})
     public void createOrder(Long personId, Delivery delivery){
         var person = getPersonFetchBasketAndChoseClothesById(personId);
         var order =  createOrder(person,delivery);
@@ -101,30 +115,37 @@ public class OrderService {
         return order;
     }
 
-
-    public void setStatusCanceledByOrderId(Long orderId) {
-        var order = getOrderFetchChoseClothesFetchClothes(orderId);
-        var personBonuses = getPersonBonuses(orderId);
-        updatePersonBonuses(personBonuses,order);
-
+    @Caching(evict = {
+            @CacheEvict(value = "person_orders",key = "#personId"),
+            @CacheEvict(value = "all_orders",allEntries = true)})
+    public void setStatusCanceledByOrderId(Long personId, Long orderId) {
+        var order = getOrderFetchChoseClothesFetchClothes(personId,orderId);
+        var personBonuses = getPersonBonuses(personId);
+        var addedUsedBonuses = addUsedBonusesToUser(personBonuses,order);
+        updatePersonBonuses(addedUsedBonuses,personId);
         returnClothes(order);
         setStatusCanceled(order);
     }
 
-    private Order getOrderFetchChoseClothesFetchClothes(Long orderId){
-        return orderRepository.findOrderByIdJoinFetchChoseClothesJoinFetchClothes(orderId)
-                .orElseThrow(()->new NotFoundException("Cannot find an order by id: "+orderId));
+    private Order getOrderFetchChoseClothesFetchClothes(Long personId,Long orderId){
+        return orderRepository.findOrderByIdJoinFetchChoseClothesJoinFetchClothes(personId,orderId)
+                .orElseThrow(()->new NotFoundException("Cannot " +
+                        "find an order by person id: "+personId+" and order id: "+orderId));
 
     }
 
-    private BigDecimal getPersonBonuses(Long orderId){
-        return personRepository.findPersonBonusesByOrderId(orderId)
-                .orElseThrow(()->new NotFoundException("Cannot find person's bonuses by orderId: "+orderId));
+    private BigDecimal getPersonBonuses(Long personId){
+        return personRepository.findPersonBonusesById(personId)
+                .orElseThrow(()->new NotFoundException("Cannot find person's bonuses by personId: "+personId));
     }
 
-    private void updatePersonBonuses(BigDecimal personBonuses, Order order){
-        var addedBonuses = personBonuses.add(order.getUsedBonuses());
-        personRepository.updatePersonBonusesByOrderId(addedBonuses,order.getId());
+    private BigDecimal addUsedBonusesToUser(BigDecimal personBonuses,Order order) {
+        return personBonuses.add(order.getUsedBonuses());
+
+    }
+
+    private void updatePersonBonuses(BigDecimal addedBonuses, Long personId){
+        personRepository.updatePersonBonusesByOrderId(addedBonuses,personId);
     }
 
 
@@ -147,16 +168,19 @@ public class OrderService {
             throw new IllegalStateException("Cannot chane status "+order.getStatus()+" to "+CANCELLED);
     }
 
-
-    public void setStatusReceivedByOrderId(Long id) {
-        var order = getOrderFetchPerson(id);
+    @Caching(evict = {
+            @CacheEvict(value = "person_orders",key = "#personId"),
+            @CacheEvict(value = "all_orders",allEntries = true)})
+    public void setStatusReceivedByOrderId(Long personId, Long orderId) {
+        var order = getOrderFetchPerson(personId,orderId);
         setStatusReceived(order);
         addBonusesToUser(order);
     }
 
-    private Order getOrderFetchPerson(Long id){
-        return orderRepository.findOrderByIdFetchPerson(id)
-                .orElseThrow(()->new NotFoundException("Cannot find order by id: "+id));
+    private Order getOrderFetchPerson(Long personId, Long orderId){
+        return orderRepository.findOrderByIdFetchPerson(personId,orderId)
+                .orElseThrow(()->new NotFoundException("Cannot find " +
+                        "order by personId: "+personId+" and order id: "+orderId));
     }
 
     private void setStatusReceived(Order order) {
