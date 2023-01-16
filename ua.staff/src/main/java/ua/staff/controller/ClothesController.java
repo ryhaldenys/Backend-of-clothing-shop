@@ -12,6 +12,7 @@ import ua.staff.dto.ClothesDto;
 import ua.staff.dto.FullClothesDto;
 import ua.staff.model.Clothes;
 
+import ua.staff.model.ClothesRequestParams;
 import ua.staff.model.Image;
 import ua.staff.model.Size;
 import ua.staff.service.ClothesService;
@@ -29,17 +30,14 @@ public class ClothesController {
     private final ClothesService clothesService;
 
     @GetMapping
-    public Slice<ClothesDto> getAll(@RequestParam(value = "sex",defaultValue = "male")String sex,Pageable pageable){
-        return clothesService.getClothesDto(sex,pageable);
+    public Slice<ClothesDto> getAll(ClothesRequestParams params, Pageable pageable){
+        return clothesService.getClothesDtos(params,pageable);
     }
 
     @GetMapping("/{id}")
     public FullClothesDto getClothesById(@PathVariable("id")Long id){
         return clothesService.getClothesById(id);
     }
-
-    //todo: getClothesByTypeAndMale
-    //todo: getClothesBySubTypeAndMale
 
 
     @PostMapping

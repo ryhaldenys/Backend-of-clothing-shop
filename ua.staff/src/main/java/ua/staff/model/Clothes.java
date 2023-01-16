@@ -1,17 +1,14 @@
 package ua.staff.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.IndexColumn;
-import org.hibernate.annotations.NaturalId;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import org.hibernate.annotations.NaturalId;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
-
 import static java.math.BigDecimal.*;
 
 
@@ -38,7 +35,7 @@ public class Clothes {
     private String type;
 
     @Column(nullable = false)
-    private String subType;
+    private String subtype;
 
     @Column(nullable = false)
     private String description;

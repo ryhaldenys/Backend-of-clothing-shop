@@ -1,7 +1,7 @@
 package ua.staff.repository.impl;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,29 +15,64 @@ import java.util.List;
 
 @Repository
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class CustomClothesRepositoryImpl implements CustomClothesRepository {
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Override
-    public Slice<Clothes> findClothesJoinFetchImagesAndSizes(String sex,Pageable pageable) {
-        List<Clothes> clothes = findAllLeftJoinFetchSizes(sex);
-        clothes = findAllLeftJoinFetchImages(clothes);
+    public Slice<Clothes> findClothesFetchImagesAndSizesBySex(String sex, Pageable pageable) {
+        var clothes = findAllLeftJoinFetchSizesBySex(sex);
+        clothes = findAllFetchImagesByClothes(clothes);
         return mapToPage(pageable,clothes);
     }
 
-    private List<Clothes> findAllLeftJoinFetchSizes(String sex){
-        return entityManager
-                .createQuery("select c from Clothes c left join fetch c.sizes where c.sex =?1",Clothes.class)
-                .setParameter(1,sex)
+    private List<Clothes> findAllLeftJoinFetchSizesBySex(String sex){
+        var query = "select c from Clothes c left join fetch c.sizes where c.sex =?1";
+        return createQuery(query,sex);
+    }
+
+    @Override
+    public Slice<Clothes> findClothesFetchImagesAndSizesBySexAndType(String sex, String subType, Pageable pageable) {
+        var clothes = findAllFetchSizesBySexAndType(sex,subType);
+        clothes = findAllFetchImagesByClothes(clothes);
+        return mapToPage(pageable,clothes);
+    }
+
+    private List<Clothes> findAllFetchSizesBySexAndSubType(String sex, String subType){
+        var query = "select c from Clothes c left join fetch c.sizes where c.sex =?1 and c.subType =?2";
+        return createQuery(query,sex,subType);
+    }
+
+
+    @Override
+    public Slice<Clothes> findClothesFetchImagesAndSizesBySexAndSubType(String sex,String type, Pageable pageable) {
+        var clothes = findAllFetchSizesBySexAndSubType(sex,type);
+        clothes = findAllFetchImagesByClothes(clothes);
+        return mapToPage(pageable,clothes);
+    }
+
+    private List<Clothes> findAllFetchSizesBySexAndType(String sex,String type){
+        var query = "select c from Clothes c left join fetch c.sizes where c.sex =?1 and c.type=?2";
+        return createQuery(query,sex,type);
+    }
+
+    private List<Clothes> findAllFetchImagesByClothes(List<Clothes> clothes){
+        var query = "select c from Clothes c left join fetch c.images where c in ?1";
+        return createQuery(query,clothes);
+    }
+
+    private<P> List<Clothes> createQuery(String query, P param){
+        return entityManager.createQuery(query,Clothes.class)
+                .setParameter(1,param)
+                .getResultList();
+    }
+    private<P1,P2> List<Clothes> createQuery(String query, P1 param1,P2 param2){
+        return entityManager.createQuery(query,Clothes.class)
+                .setParameter(1,param1)
+                .setParameter(2,param2)
                 .getResultList();
     }
 
-    private List<Clothes> findAllLeftJoinFetchImages(List<Clothes> clothes){
-        return entityManager.createQuery("select c from Clothes c left join fetch c.images where c in ?1",Clothes.class)
-                .setParameter(1,clothes)
-                .getResultList();
-    }
 
     private Slice<Clothes> mapToPage(Pageable pageable,List<Clothes> clothes){
         sortListByAddedTime(clothes);

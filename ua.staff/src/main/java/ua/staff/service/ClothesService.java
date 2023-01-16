@@ -11,6 +11,7 @@ import ua.staff.dto.FullClothesDto;
 import ua.staff.dto.ClothesDto;
 import ua.staff.exception.NotFoundException;
 import ua.staff.model.Clothes;
+import ua.staff.model.ClothesRequestParams;
 import ua.staff.model.Image;
 import ua.staff.model.Size;
 import ua.staff.repository.ClothesRepository;
@@ -27,28 +28,60 @@ import java.util.stream.Collectors;
 public class ClothesService {
     private final ClothesRepository clothesRepository;
 
-    public Slice<ClothesDto> getClothesDto(String sex,Pageable pageable){
-        var clothesSlice = getClothesFetchImagesAndSizes(sex,pageable);
-        checkIsNotEmpty(clothesSlice);
+    public Slice<ClothesDto> getClothesDtos(ClothesRequestParams params, Pageable pageable){
+        var clothesSlice = chooseClothes(params,pageable);
         return mapToSliceOfClothesDto(clothesSlice);
     }
 
+    private Slice<Clothes> chooseClothes(ClothesRequestParams params,Pageable pageable){
+        Slice<Clothes> clothes;
+
+        if (params.getSubtype()!=null) {
+            clothes = getClothesFetchImagesAndSizesBySubType(params.getSex(), params.getSubtype(), pageable);
+            System.out.println(clothes.getContent());
+        }else if(params.getType()!=null) {
+            clothes = getClothesFetchImagesAndSizesByType(params.getSex(), params.getType(), pageable);
+        }else
+            clothes = getClothesFetchImagesAndSizes(params.getSex(),pageable);
+
+        return clothes;
+    }
+
     private Slice<Clothes> getClothesFetchImagesAndSizes(String sex, Pageable pageable){
-        return clothesRepository.findClothesJoinFetchImagesAndSizes(sex,pageable);
+        return clothesRepository.findClothesFetchImagesAndSizesBySex(sex,pageable);
+    }
+
+//    public Slice<ClothesDto> getClothesDtoBySexAndSubType(String sex,String subType,Pageable pageable){
+//        var clothesSlice = getClothesFetchImagesAndSizesBySubType(sex,subType,pageable);
+//        return mapToSliceOfClothesDto(clothesSlice);
+//    }
+
+    private Slice<Clothes> getClothesFetchImagesAndSizesBySubType(String sex,String subType, Pageable pageable){
+        return clothesRepository.findClothesFetchImagesAndSizesBySexAndSubType(sex,subType,pageable);
+    }
+
+//
+//    public Slice<ClothesDto> getClothesDtoBySexAndType(String sex,String type,Pageable pageable){
+//        var clothesSlice = getClothesFetchImagesAndSizesByType(sex,type,pageable);
+//        return mapToSliceOfClothesDto(clothesSlice);
+//    }
+    private Slice<Clothes> getClothesFetchImagesAndSizesByType(String sex,String type, Pageable pageable){
+        return clothesRepository.findClothesFetchImagesAndSizesBySexAndType(sex,type,pageable);
+    }
+
+    private Slice<ClothesDto> mapToSliceOfClothesDto(Slice<Clothes> clothesSlice) {
+        checkIsNotEmpty(clothesSlice);
+        var clothes = clothesSlice.stream()
+                .map(this::mapToClothesDto)
+                .toList();
+
+        return new PageImpl<>(clothes);
     }
 
     private void checkIsNotEmpty(Slice<Clothes> clothes) {
         if (clothes.getContent().isEmpty()){
             throw new NotFoundException("Cannot find any clothes");
         }
-    }
-
-    private Slice<ClothesDto> mapToSliceOfClothesDto(Slice<Clothes> clothesSlice) {
-        var clothes = clothesSlice.stream()
-                .map(this::mapToClothesDto)
-                .toList();
-
-        return new PageImpl<>(clothes);
     }
 
     private ClothesDto mapToClothesDto(Clothes clothes){
@@ -71,8 +104,6 @@ public class ClothesService {
                 .collect(Collectors.joining(", "));
 
     }
-
-
 
     public FullClothesDto getClothesById(Long id){
         return getFullClothesDto(id);
@@ -99,7 +130,6 @@ public class ClothesService {
     private FullClothesDto getFullClothesDto(ClothesDetailsDto clothesDetails, Set<Image> images, Set<Size> sizes){
         return new FullClothesDto(clothesDetails,images,sizes);
     }
-
 
     @Transactional
     public Clothes saveClothes(Clothes clothes){

@@ -61,7 +61,7 @@ public class ClothesRepositoryTest {
     void findClothesJoinFetchImagesAndSizesTest(){
 
         Slice<Clothes> clothesSlice = repository
-                .findClothesJoinFetchImagesAndSizes("male", PageRequest.of(0,clothes.size()));
+                .findClothesFetchImagesAndSizesBySex("male", PageRequest.of(0,clothes.size()));
         clothes.sort(Comparator.comparing(Clothes::getAdded_at));
 
         assertThat(clothes.get(0).getArticle()).isEqualTo(clothes.get(0).getArticle());

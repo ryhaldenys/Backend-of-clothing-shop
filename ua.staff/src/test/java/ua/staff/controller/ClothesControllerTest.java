@@ -4,33 +4,36 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
+
 import org.junit.jupiter.api.Test;
+
+import org.mockito.BDDMockito;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
 import org.springframework.data.domain.PageImpl;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.staff.builder.ClothesBuilder;
 import ua.staff.dto.ClothesDetailsDto;
 import ua.staff.dto.ClothesDto;
 import ua.staff.dto.FullClothesDto;
 
+import ua.staff.exception.NotFoundException;
 import ua.staff.generator.ClothesGenerator;
 import ua.staff.model.Clothes;
+import ua.staff.model.ClothesRequestParams;
 import ua.staff.model.Image;
 import ua.staff.model.Size;
 import ua.staff.repository.ClothesRepository;
 import ua.staff.service.ClothesService;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
@@ -52,7 +55,6 @@ public class ClothesControllerTest {
     @MockBean
     private ClothesService service;
 
-
     @Test
     void getAllTest() throws Exception {
 
@@ -62,7 +64,7 @@ public class ClothesControllerTest {
 
         Slice<ClothesDto> clothesDtoSlice = new PageImpl<>(clothesDtos);
 
-        when(service.getClothesDto(anyString(), any(Pageable.class)))
+        when(service.getClothesDtos(any(ClothesRequestParams.class), any(Pageable.class)))
                 .thenReturn(clothesDtoSlice);
 
         mockMvc.perform(get("/clothes")
@@ -112,11 +114,10 @@ public class ClothesControllerTest {
                 .andExpect(jsonPath("$.article", is(clothes.getArticle())));
     }
 
-
     @Test
     void deleteClothes() throws Exception{
-        when(repository.findClothesArticleById(1L)).thenReturn(Optional.of("article"));
-
+        //BDDMockito.willThrow(NotFoundException.class).given(service).deleteClothesById(1L);
+        //BDDMockito.willThrow(NotFoundException.class);
         mockMvc.perform(delete("/clothes/1"))
                 .andDo(print())
                 .andExpect(r -> assertThat(r.getResponse().getRedirectedUrl())

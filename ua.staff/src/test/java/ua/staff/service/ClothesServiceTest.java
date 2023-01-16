@@ -13,6 +13,7 @@ import ua.staff.dto.ClothesDto;
 import ua.staff.dto.FullClothesDto;
 import ua.staff.generator.ClothesGenerator;
 import ua.staff.model.Clothes;
+import ua.staff.model.ClothesRequestParams;
 import ua.staff.model.Image;
 import ua.staff.model.Size;
 import ua.staff.repository.ClothesRepository;
@@ -41,7 +42,7 @@ public class ClothesServiceTest {
 
     @Test
     void getClothesDtoTest(){
-        Slice<ClothesDto> clothesDto = clothesService.getClothesDto("male", PageRequest.of(0,clothes.size()));
+        Slice<ClothesDto> clothesDto = clothesService.getClothesDtos(new ClothesRequestParams(), PageRequest.of(0,clothes.size()));
 
         assertThat(clothesDto.getContent().get(0).id()).isEqualTo(clothes.get(0).getId());
         assertThat(clothesDto.getContent().get(1).id()).isEqualTo(clothes.get(1).getId());
