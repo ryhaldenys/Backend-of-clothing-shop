@@ -12,7 +12,7 @@ import java.util.List;
 public class BasketDto {
     private Long id;
     private BigDecimal usedBonuses;
-    private List<ChoseClothesDto> clothes;
+    private List<ChoseClothesDto> choseClothes;
 
     public BasketDto(Long id, BigDecimal usedBonuses) {
         this.id = id;

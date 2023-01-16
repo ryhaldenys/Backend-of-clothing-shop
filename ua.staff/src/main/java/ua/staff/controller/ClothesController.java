@@ -5,13 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 
 import org.springframework.data.domain.Slice;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.staff.builder.UriBuilder;
 import ua.staff.dto.ClothesDto;
 import ua.staff.dto.FullClothesDto;
-import ua.staff.generator.ResponseEntityGenerator;
 import ua.staff.model.Clothes;
 
 import ua.staff.model.Image;
@@ -40,6 +38,10 @@ public class ClothesController {
         return clothesService.getClothesById(id);
     }
 
+    //todo: getClothesByTypeAndMale
+    //todo: getClothesBySubTypeAndMale
+
+
     @PostMapping
     public ResponseEntity<Clothes> saveClothes(@RequestBody Clothes clothes){
         clothesService.saveClothes(clothes);
@@ -50,11 +52,9 @@ public class ClothesController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteClothesById(@PathVariable("id")Long id){
-
         clothesService.deleteClothesById(id);
 
         var location = UriBuilder.createUriFromCurrentServletMapping("/clothes");
-
         return getResponseEntityWithNoContent(location);
     }
 

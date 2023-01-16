@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.staff.builder.OrderBuilder;
 import ua.staff.dto.AllOrdersDto;
+import ua.staff.dto.ChoseClothesDto;
 import ua.staff.dto.OrderDto;
 import ua.staff.exception.NotFoundException;
 import ua.staff.generator.OrderNumberGenerator;
@@ -19,6 +20,7 @@ import ua.staff.repository.OrderRepository;
 import ua.staff.repository.PersonRepository;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static java.math.BigDecimal.valueOf;
 import static java.math.RoundingMode.*;
@@ -37,9 +39,20 @@ public class OrderService {
 
 
     @Cacheable(value = "person_orders", key = "#personId")
-    public Slice<AllOrdersDto> getAllOrders(Long personId){
-        System.out.println("cache was not used in order service");
+    public Slice<AllOrdersDto> getAllOrdersByPersonId(Long personId){
+        var orderSlice =  getAllByPersonId(personId);
+        checkIsNotEmpty(orderSlice,personId);
+        return orderSlice;
+    }
+
+    private Slice<AllOrdersDto> getAllByPersonId(Long personId){
         return orderRepository.findAllByPersonId(personId);
+    }
+
+    private void checkIsNotEmpty(Slice<AllOrdersDto> orderSlice,Long personId){
+        if (orderSlice.getContent().isEmpty()){
+            throw new NotFoundException("Cannot find any orders by person id: "+personId);
+        }
     }
 
     @Caching(evict = {
@@ -107,12 +120,24 @@ public class OrderService {
     }
 
 
-
     public OrderDto getOrderById(Long orderId) {
-        var order = orderRepository.findOrderById(orderId).orElseThrow();
-        var choseClothes = choseClothesRepository.findAllByOrderId(orderId);
-        order.setChoseClothes(choseClothes);
+        var order = getOrderDtoById(orderId);
+        var choseClothes = getListChoseClothesDtoByOrderId(orderId);
+        addChoseClothesToOrder(order,choseClothes);
         return order;
+    }
+
+    private OrderDto getOrderDtoById(Long orderId){
+        return orderRepository.findOrderById(orderId)
+                .orElseThrow(()->new NotFoundException("Cannot find order by id: "+orderId));
+    }
+
+    private List<ChoseClothesDto> getListChoseClothesDtoByOrderId(Long orderId){
+        return choseClothesRepository.findAllChoseClothesByOrderId(orderId);
+    }
+
+    private void addChoseClothesToOrder(OrderDto order,List<ChoseClothesDto> choseClothes){
+        order.setChoseClothes(choseClothes);
     }
 
     @Caching(evict = {
@@ -198,4 +223,22 @@ public class OrderService {
 
         person.setBonuses(person.getBonuses().add(bonuses));
     }
+
+
+    public Slice<AllOrdersDto> getAllOrders() {
+        var orderSlice = getAll();
+        checkIsNotEmpty(orderSlice);
+        return orderSlice;
+    }
+
+    private Slice<AllOrdersDto> getAll(){
+        return orderRepository.findAllOrders();
+    }
+
+    private void checkIsNotEmpty(Slice<AllOrdersDto> orderSlice) {
+        if (orderSlice.getContent().isEmpty()){
+            throw new NotFoundException("Cannot find any orders");
+        }
+    }
+
 }

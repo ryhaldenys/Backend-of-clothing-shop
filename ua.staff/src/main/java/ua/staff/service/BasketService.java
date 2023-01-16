@@ -6,6 +6,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.staff.dto.BasketDto;
+import ua.staff.dto.ChoseClothesDto;
 import ua.staff.exception.NotFoundException;
 import ua.staff.exception.ToManyChoseClothesException;
 import ua.staff.model.*;
@@ -16,6 +17,7 @@ import ua.staff.repository.PersonRepository;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import static java.math.BigDecimal.*;
 
@@ -30,12 +32,28 @@ public class BasketService {
 
     @Cacheable(value = "basket",key = "#personId")
     public BasketDto getBasketElements(Long personId){
-        System.out.println("cache was not used in basket service");
-        var basketDtos = basketRepository.findBasketIdAndUsedBonusesById(personId);
-        var choseClothes = choseClothesRepository.findAllByBasketId(personId);
-        basketDtos.setClothes(choseClothes);
+        var basketDtos = getBasketIdAndUsedBonusesById(personId);
+        var choseClothes = getAllChoseClothesByBasketId(personId);
+
+        addChoseClothesToBasket(basketDtos,choseClothes);
+        basketDtos.setChoseClothes(choseClothes);
         return basketDtos;
     }
+
+    private void addChoseClothesToBasket(BasketDto basketDtos, List<ChoseClothesDto> choseClothes) {
+        basketDtos.setChoseClothes(choseClothes);
+    }
+
+    private BasketDto getBasketIdAndUsedBonusesById(Long personId) {
+        return basketRepository.findBasketIdAndUsedBonusesById(personId)
+                .orElseThrow(()->new NotFoundException("Cannot find basket by id: "+personId));
+    }
+
+    private List<ChoseClothesDto> getAllChoseClothesByBasketId(Long basketId){
+        return choseClothesRepository.findAllChoseClothesByBasketId(basketId);
+    }
+
+
 
     @CacheEvict(value = "basket",key = "#personId")
     public void addClothesToBasket(Long personId, Long clothesId, Size size){

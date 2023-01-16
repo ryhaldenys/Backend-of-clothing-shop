@@ -9,34 +9,38 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.staff.dto.ClothesDetailsDto;
 import ua.staff.dto.FullClothesDto;
 import ua.staff.dto.ClothesDto;
-import ua.staff.dto.PersonRolesDto;
 import ua.staff.exception.NotFoundException;
 import ua.staff.model.Clothes;
 import ua.staff.model.Image;
 import ua.staff.model.Size;
 import ua.staff.repository.ClothesRepository;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ClothesService {
-
-
     private final ClothesRepository clothesRepository;
 
-
     public Slice<ClothesDto> getClothesDto(String sex,Pageable pageable){
-
-        var clothesSlice = clothesRepository.findClothesJoinFetchImagesAndSizes(sex,pageable);
-
+        var clothesSlice = getClothesFetchImagesAndSizes(sex,pageable);
+        checkIsNotEmpty(clothesSlice);
         return mapToSliceOfClothesDto(clothesSlice);
+    }
+
+    private Slice<Clothes> getClothesFetchImagesAndSizes(String sex, Pageable pageable){
+        return clothesRepository.findClothesJoinFetchImagesAndSizes(sex,pageable);
+    }
+
+    private void checkIsNotEmpty(Slice<Clothes> clothes) {
+        if (clothes.getContent().isEmpty()){
+            throw new NotFoundException("Cannot find any clothes");
+        }
     }
 
     private Slice<ClothesDto> mapToSliceOfClothesDto(Slice<Clothes> clothesSlice) {
@@ -44,7 +48,6 @@ public class ClothesService {
                 .map(this::mapToClothesDto)
                 .toList();
 
-        checkIsNotEmpty(clothes);
         return new PageImpl<>(clothes);
     }
 
@@ -62,7 +65,6 @@ public class ClothesService {
     }
 
     private String getJoinedSizes(Clothes clothes) {
-
         return clothes.getSizes().stream()
                 .map(Size::getSize)
                 .filter(Objects::nonNull)
@@ -70,25 +72,31 @@ public class ClothesService {
 
     }
 
-    private void checkIsNotEmpty(List<ClothesDto> clothes) {
-        if (clothes.isEmpty()){
-            throw new NotFoundException("Cannot find any clothes");
-        }
-    }
-
 
 
     public FullClothesDto getClothesById(Long id){
-        return createFullClothesDto(id);
+        return getFullClothesDto(id);
     }
 
-    private FullClothesDto createFullClothesDto(Long id) {
-        var images = clothesRepository.findClothesImagesById(id);
-        var sizes = clothesRepository.findClothesSizesById(id);
+    private FullClothesDto getFullClothesDto(Long id) {
+        var clothesDetails = getClothesDetailsById(id);
+        var images = getClothesImagesById(id);
+        var sizes = getClothesSizesById(id);
 
-        ClothesDetailsDto clothesDetails = clothesRepository.findClothesById(id)
+        return getFullClothesDto(clothesDetails,images,sizes);
+    }
+
+    private ClothesDetailsDto getClothesDetailsById(Long id){
+        return clothesRepository.findClothesById(id)
                 .orElseThrow(()-> new NotFoundException("Cannot find clothes by id: "+id));
-
+    }
+    private Set<Image> getClothesImagesById(Long id){
+        return clothesRepository.findClothesImagesById(id);
+    }
+    private Set<Size> getClothesSizesById(Long id){
+        return clothesRepository.findClothesSizesById(id);
+    }
+    private FullClothesDto getFullClothesDto(ClothesDetailsDto clothesDetails, Set<Image> images, Set<Size> sizes){
         return new FullClothesDto(clothesDetails,images,sizes);
     }
 
@@ -105,8 +113,8 @@ public class ClothesService {
 
 
     private void deleteClothes(Long id) {
-        clothesRepository.findClothesArticleById(id)
-                .orElseThrow(()-> new NotFoundException("Cannot find and delete clothes by id: "+id));
+        clothesRepository.findById(id)
+            .orElseThrow(()-> new NotFoundException("Cannot find and delete clothes by id: "+id));
 
         clothesRepository.deleteById(id);
     }
@@ -122,7 +130,6 @@ public class ClothesService {
     public void removeImage(Long id,Image image){
         var clothes =clothesRepository.findById(id)
                 .orElseThrow(()->new NotFoundException("Cannot remove image because clothes by id: "+id+" not found"));
-
         clothes.removeImage(image);
     }
 
@@ -130,15 +137,13 @@ public class ClothesService {
     public void addSize(Long id,Size size){
         var clothes =clothesRepository.findById(id)
                 .orElseThrow(()->new NotFoundException("Cannot add size because clothes by id: "+id+" not found"));
-
         clothes.addSize(size);
     }
 
-
+    @Transactional
     public void removeSize(Long id,Size size){
         var clothes =clothesRepository.findById(id)
                 .orElseThrow(()->new NotFoundException("Cannot remove size because clothes by id: "+id+" not found"));
-
         clothes.removeSize(size);
     }
 }

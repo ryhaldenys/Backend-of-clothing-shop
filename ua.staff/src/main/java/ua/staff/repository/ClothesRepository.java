@@ -23,9 +23,6 @@ public interface ClothesRepository extends JpaRepository<Clothes,Long>,CustomClo
     @Query("SELECT new ua.staff.dto.ClothesDetailsDto(c.id,c.name,c.article,c.subType,c.description,c.price,c.discount) from Clothes c where c.id = ?1")
     Optional<ClothesDetailsDto> findClothesById(Long id);
 
-    @Query("SELECT c.article from Clothes c where c.id =?1")
-    Optional<String> findClothesArticleById(Long id);
-
     @Query("select c.sizes from Clothes c join c.sizes s where c.id = ?1 and s.size =?2")
     Optional<Size> findSizeByClothesIdAndSizeType(Long clothesId, String size);
 

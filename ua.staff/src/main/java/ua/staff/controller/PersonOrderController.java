@@ -23,7 +23,7 @@ public class PersonOrderController {
 
     @GetMapping
     public Slice<AllOrdersDto> getAllOrders(@PathVariable Long person_id){
-        return orderService.getAllOrders(person_id);
+        return orderService.getAllOrdersByPersonId(person_id);
     }
 
     @GetMapping("/{order_id}")

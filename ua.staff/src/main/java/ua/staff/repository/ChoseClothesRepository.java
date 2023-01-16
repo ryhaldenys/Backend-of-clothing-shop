@@ -19,7 +19,7 @@ public interface ChoseClothesRepository extends JpaRepository<ChoseClothes,Long>
             "cl.id,c.clothes.name,c.clothes.price,c.clothes.discount,i.url) "+
             "from ChoseClothes c join c.clothes cl join cl.images i " +
             "where c.basket.id =?1 and i.isMain = true")
-    List<ChoseClothesDto> findAllByBasketId(Long basketId);
+    List<ChoseClothesDto> findAllChoseClothesByBasketId(Long basketId);
 
 
 
@@ -27,14 +27,9 @@ public interface ChoseClothesRepository extends JpaRepository<ChoseClothes,Long>
             "cl.id,c.clothes.name,c.clothes.price,c.clothes.discount,i.url) "+
             "from ChoseClothes c join c.clothes cl join cl.images i " +
             "where c.order.id =?1 and i.isMain = true")
-    List<ChoseClothesDto> findAllByOrderId(Long orderId);
+    List<ChoseClothesDto> findAllChoseClothesByOrderId(Long orderId);
 
     @Query("select sum(c.amountOfClothes*(cl.price - (cl.price*cl.discount))) as totalPrice from ChoseClothes c join c.clothes cl where c.basket.id = ?1")
     Optional<BigDecimal> findTotalPriceOfChoseClothesByBasketId(Long basketId);
 
-    @Query("select sum(cc.amountOfClothes*(cl.price - (cl.price*cl.discount))) as totalPrice from ChoseClothes cc join cc.clothes cl where cc.id = ?1")
-    Optional<BigDecimal> findTotalPriceOfChoseClothesById(Long id);
-
-//    @Query("select cl.id from ChoseClothes c join c.clothes cl where c.id=?1")
-//    Long findClothesIdByChoseClothesId(Long id);
 }

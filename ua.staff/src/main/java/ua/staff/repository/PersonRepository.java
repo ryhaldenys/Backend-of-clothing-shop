@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-
 public interface PersonRepository extends JpaRepository<Person,Long> {
 
     @Query("SELECT new ua.staff.dto.PeopleDto(p.id,p.firstName,p.lastName,p.numberPhone) from Person p")
