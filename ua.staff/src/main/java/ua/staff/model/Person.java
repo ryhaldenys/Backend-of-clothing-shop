@@ -16,6 +16,7 @@ import static java.math.BigDecimal.*;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(of = "numberPhone")
+@AllArgsConstructor
 @Entity
 public class Person {
     @Id

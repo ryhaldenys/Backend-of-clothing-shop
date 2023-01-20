@@ -1,13 +1,10 @@
 package ua.staff.builder;
 
-import org.springframework.data.domain.Slice;
-import ua.staff.model.*;
 
+import ua.staff.model.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class ClothesBuilder{
@@ -17,12 +14,15 @@ public class ClothesBuilder{
     private String type;
     private String subType;
     private String description;
-    private LocalDateTime added_at = LocalDateTime.now();
+    private final LocalDateTime added_at = LocalDateTime.now();
     private BigDecimal price;
     private BigDecimal discount;
     private String sex;
     private Set<Image> images = new HashSet<>();
     private Set<Size> sizes =  new HashSet<>();
+
+
+    private ClothesBuilder(){}
 
     public static ClothesBuilder builder(){
         return new ClothesBuilder();
