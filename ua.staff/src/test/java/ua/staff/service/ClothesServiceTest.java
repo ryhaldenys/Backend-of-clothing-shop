@@ -32,7 +32,7 @@ public class ClothesServiceTest {
     @Autowired
     private ClothesRepository clothesRepository;
 
-    List<Clothes> clothes;
+    private List<Clothes> clothes;
 
     @BeforeEach
     void setUp(){

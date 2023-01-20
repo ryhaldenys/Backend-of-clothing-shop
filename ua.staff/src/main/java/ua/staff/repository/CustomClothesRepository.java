@@ -6,6 +6,6 @@ import ua.staff.model.Clothes;
 
 public interface CustomClothesRepository {
     Slice<Clothes> findClothesFetchImagesAndSizesBySex(String sex, Pageable pageable);
-    Slice<Clothes> findClothesFetchImagesAndSizesBySexAndType(String sex, String subType, Pageable pageable);
-    Slice<Clothes> findClothesFetchImagesAndSizesBySexAndSubType(String sex, String type, Pageable pageable);
+    Slice<Clothes> findClothesFetchImagesAndSizesBySexAndType(String sex, String type, Pageable pageable);
+    Slice<Clothes> findClothesFetchImagesAndSizesBySexAndSubType(String sex, String subtype, Pageable pageable);
 }
