@@ -20,7 +20,7 @@ public interface ClothesRepository extends JpaRepository<Clothes,Long>,CustomClo
     @Query("SELECT c.images from Clothes c where c.id = ?1")
     Set<Image> findClothesImagesById(Long id);
 
-    @Query("SELECT new ua.staff.dto.ClothesDetailsDto(c.id,c.name,c.article,c.subType,c.description,c.price,c.discount) from Clothes c where c.id = ?1")
+    @Query("SELECT new ua.staff.dto.ClothesDetailsDto(c.id,c.name,c.article,c.subtype,c.description,c.price,c.discount) from Clothes c where c.id = ?1")
     Optional<ClothesDetailsDto> findClothesById(Long id);
 
     @Query("select c.sizes from Clothes c join c.sizes s where c.id = ?1 and s.size =?2")
