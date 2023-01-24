@@ -170,7 +170,7 @@ public class OrderService {
     }
 
     private void updatePersonBonuses(BigDecimal addedBonuses, Long personId){
-        personRepository.updatePersonBonusesByOrderId(addedBonuses,personId);
+        personRepository.updatePersonBonusesById(addedBonuses,personId);
     }
 
 

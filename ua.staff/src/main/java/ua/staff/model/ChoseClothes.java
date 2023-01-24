@@ -29,7 +29,7 @@ public class ChoseClothes {
     private String sizeKind;
 
 
-    @ManyToOne(optional = false,fetch = FetchType.LAZY)
+    @ManyToOne(optional = false,fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
     @JoinColumn(name = "clothes_id")
     private Clothes clothes;
 
