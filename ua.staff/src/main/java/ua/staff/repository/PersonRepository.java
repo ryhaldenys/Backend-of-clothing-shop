@@ -44,6 +44,6 @@ public interface PersonRepository extends JpaRepository<Person,Long> {
             "update person " +
             "set bonuses =:bonuses " +
             "where id =:id",nativeQuery = true)
-    void updatePersonBonusesByOrderId(@Param("bonuses") BigDecimal bonuses,@Param("id") Long id);
+    void updatePersonBonusesById(@Param("bonuses") BigDecimal bonuses, @Param("id") Long id);
 }
 
