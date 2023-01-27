@@ -3,13 +3,11 @@ package ua.staff.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.staff.builder.UriBuilder;
 import ua.staff.dto.PeopleDto;
-import ua.staff.dto.PersonRolesDto;
-import ua.staff.generator.ResponseEntityGenerator;
+import ua.staff.dto.PersonDto;
 import ua.staff.model.Person;
 import ua.staff.model.PostAddress;
 import ua.staff.service.PersonService;
@@ -30,7 +28,7 @@ public class PersonController {
     }
 
     @GetMapping("/{id}")
-    public PersonRolesDto getPerson(@PathVariable("id")Long id){
+    public PersonDto getPerson(@PathVariable("id")Long id){
         return personService.getPersonById(id);
     }
 

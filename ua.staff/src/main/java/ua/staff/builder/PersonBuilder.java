@@ -14,9 +14,10 @@ public class PersonBuilder {
     private String firstName;
     private String lastName;
     private String password;
-    private String numberPhone;
+    private String email;
     private final LocalDateTime createdAt = LocalDateTime.now();
-    private List<Role> roles = new ArrayList<>();
+    private Role role ;
+    private final String status ="ACTIVE";
     private PostAddress postAddress;
     private BigDecimal bonuses = ZERO;
     private Basket basket;
@@ -48,13 +49,13 @@ public class PersonBuilder {
         return this;
     }
 
-    public PersonBuilder numberPhone(String numberPhone){
-        this.numberPhone = numberPhone;
+    public PersonBuilder email(String email){
+        this.email = email;
         return this;
     }
 
-    public PersonBuilder roles(List<Role> roles){
-        this.roles = roles;
+    public PersonBuilder role(Role role){
+        this.role = role;
         return this;
     }
 
@@ -80,6 +81,6 @@ public class PersonBuilder {
 
     public Person build(){
         return new Person(id,firstName,lastName,password,
-                numberPhone, createdAt,roles,postAddress,bonuses,basket,orders);
+                email, createdAt,role,status,postAddress,bonuses,basket,orders);
     }
 }
