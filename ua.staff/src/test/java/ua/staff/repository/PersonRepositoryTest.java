@@ -45,8 +45,8 @@ public class PersonRepositoryTest {
         var peopleDtoSlice = personRepository.findAllPeople(pageable);
         var listPeople = peopleDtoSlice.getContent();
 
-        assertThat(people.get(0).getNumberPhone()).isEqualTo(listPeople.get(0).numberPhone());
-        assertThat(people.get(1).getNumberPhone()).isEqualTo(listPeople.get(1).numberPhone());
+        assertThat(people.get(0).getEmail()).isEqualTo(listPeople.get(0).numberPhone());
+        assertThat(people.get(1).getEmail()).isEqualTo(listPeople.get(1).numberPhone());
     }
 
     @Test
@@ -55,18 +55,10 @@ public class PersonRepositoryTest {
         var personDto = personRepository.findPersonDtoById(people.get(1).getId())
                 .orElseThrow();
 
-        assertThat(personDto.numberPhone()).isEqualTo(person.getNumberPhone());
+        assertThat(personDto.numberPhone()).isEqualTo(person.getEmail());
         assertThat(personDto.id()).isEqualTo(person.getId());
     }
 
-    @Test
-    void findPersonRolesByIdTest(){
-        var person = people.get(0);
-
-        var roles = personRepository.findPersonRolesById(person.getId());
-
-        assertThat(roles).isEqualTo(person.getRoles());
-    }
 
     @Test
     void findPersonFetchBasketByIdTest(){

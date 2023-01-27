@@ -12,6 +12,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import org.springframework.test.web.servlet.MockMvc;
 
 import ua.staff.dto.ClothesDetailsDto;
@@ -35,6 +37,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
+@WithMockUser
 @WebMvcTest(ClothesController.class)
 public class ClothesControllerTest {
 
@@ -91,7 +95,7 @@ public class ClothesControllerTest {
         var clothes = ClothesGenerator.generateClothes(12);
         clothes.setId(1L);
 
-        mockMvc.perform(post("/clothes")
+        mockMvc.perform(post("/clothes").with(csrf())
                         .content(mapToString(clothes))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -107,7 +111,7 @@ public class ClothesControllerTest {
     void deleteClothes() throws Exception{
         //BDDMockito.willThrow(NotFoundException.class).given(service).deleteClothesById(1L);
         //BDDMockito.willThrow(NotFoundException.class);
-        mockMvc.perform(delete("/clothes/1"))
+        mockMvc.perform(delete("/clothes/1").with(csrf()))
                 .andDo(print())
                 .andExpect(r -> assertThat(r.getResponse().getRedirectedUrl())
                         .isEqualTo("http://localhost/clothes"))
