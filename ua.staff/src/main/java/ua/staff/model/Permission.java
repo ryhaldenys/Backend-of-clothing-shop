@@ -1,8 +1,8 @@
 package ua.staff.model;
 
 public enum Permission {
-    DEVELOPERS_READ("developers:read"),
-    DEVELOPERS_WRITE("developers:write");
+    ADVANCED("advanced"),
+    SIMPLE("simple");
 
     private final String permission;
 

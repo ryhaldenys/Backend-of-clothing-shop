@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ua.staff.builder.UriBuilder;
 import ua.staff.dto.PeopleDto;
@@ -17,22 +18,25 @@ import static ua.staff.generator.ResponseEntityGenerator.*;
 
 
 @RestController
-@RequestMapping("/people")
+@RequestMapping("/api/people")
 @RequiredArgsConstructor
 public class PersonController {
     private final PersonService personService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('advanced')")
     public Slice<PeopleDto> getAll(Pageable pageable){
         return personService.getAllPeople(pageable);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('advanced') or authentication.principal.id == #id")
     public PersonDto getPerson(@PathVariable("id")Long id){
         return personService.getPersonById(id);
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('advanced')")
     public ResponseEntity<Person> savePerson(@RequestBody Person person){
         personService.savePerson(person);
 
@@ -41,6 +45,7 @@ public class PersonController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('advanced') or authentication.principal.id == #id")
     public ResponseEntity<Void> updatePerson(@PathVariable("id")Long id, @RequestBody Person person){
         personService.updatePerson(id,person);
 
@@ -49,6 +54,7 @@ public class PersonController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('advanced') or authentication.principal.id == #id")
     public ResponseEntity<Person> deletePerson(@PathVariable("id")Long id) {
         var person = personService.deletePerson(id);
 
@@ -57,6 +63,7 @@ public class PersonController {
     }
 
     @GetMapping("/{id}/address")
+    @PreAuthorize("hasAuthority('advanced') or authentication.principal.id == #id")
     public PostAddress getAddress(@PathVariable Long id){
         return personService.getPostAddressById(id);
     }

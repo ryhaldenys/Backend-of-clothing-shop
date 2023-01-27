@@ -21,12 +21,20 @@ public class UserValidator implements Validator {
     public void validate(Object target, Errors errors) {
         UserForm user = (UserForm) target;
 
+        checkIsUserPresent(user,errors);
+        checkIsCorrectPassword(user,errors);
+
+    }
+
+    private void checkIsUserPresent(UserForm user,Errors errors){
         boolean isPresent = personRepository.findByEmail(user.getEmail()).isPresent();
 
-        System.out.println(isPresent);
         if (isPresent){
             errors.reject("email","Such user already exists");
         }
+    }
+
+    private void checkIsCorrectPassword(UserForm user, Errors errors) {
         if (!user.getPassword().equals(user.getConfirmPassword())){
             errors.reject("confirm password","Password don't match");
         }

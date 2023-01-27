@@ -16,8 +16,8 @@ public class PersonBuilder {
     private String password;
     private String email;
     private final LocalDateTime createdAt = LocalDateTime.now();
-    private Role role ;
-    private final String status ="ACTIVE";
+    private Role role = Role.USER;
+    private String status ="ACTIVE";
     private PostAddress postAddress;
     private BigDecimal bonuses = ZERO;
     private Basket basket;
@@ -71,6 +71,11 @@ public class PersonBuilder {
 
     public PersonBuilder basket(Basket basket){
         this.basket = basket;
+        return this;
+    }
+
+    public PersonBuilder status(String status){
+        this.status = status;
         return this;
     }
 

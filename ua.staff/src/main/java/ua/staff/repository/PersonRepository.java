@@ -10,13 +10,13 @@ import ua.staff.dto.PeopleDto;
 import ua.staff.dto.PersonDto;
 import ua.staff.model.Person;
 import ua.staff.model.PostAddress;
-import ua.staff.model.Role;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
 public interface PersonRepository extends JpaRepository<Person,Long> {
-    Optional<Person> findByEmail(String email);
+    @Query("select p from Person p join fetch p.basket where p.email =:email")
+    Optional<Person> findByEmail(@Param("email") String email);
 
     @Query("SELECT new ua.staff.dto.PeopleDto(p.id,p.firstName,p.lastName,p.email) from Person p")
     Slice<PeopleDto> findAllPeople(Pageable pageable);

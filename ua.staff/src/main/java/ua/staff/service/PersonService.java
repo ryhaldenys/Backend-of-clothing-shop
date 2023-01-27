@@ -6,6 +6,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.staff.builder.PersonBuilder;
 import ua.staff.dto.PeopleDto;
 import ua.staff.dto.PersonDto;
 import ua.staff.dto.UserForm;
@@ -13,7 +14,7 @@ import ua.staff.exception.NotFoundException;
 import ua.staff.model.Basket;
 import ua.staff.model.Person;
 import ua.staff.model.PostAddress;
-import ua.staff.model.Role;
+
 import ua.staff.repository.PersonRepository;
 
 @Service
@@ -72,23 +73,31 @@ public class PersonService {
 
     @Transactional
     public Person savePerson(UserForm user) {
-        System.out.println(user);
-        Person person = new Person();
-        person.setFirstName(user.getFirstName());
-        person.setLastName(user.getLastName());
-        person.setEmail(user.getEmail());
-        person.setPassword(passwordEncoder.encode(user.getPassword()));
-        person.setRole(Role.USER);
-        person.setStatus("ACTIVE");
-        addBasket(person);
+        var person = createPerson(user);
         return save(person);
     }
+
+    private Person createPerson(UserForm user) {
+        var person = PersonBuilder.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .password(encodePassword(user.getPassword()))
+                .build();
+        addBasket(person);
+        return person;
+    }
+
 
     @Transactional
     public Person savePerson(Person person) {
+        person.setPassword(encodePassword(person.getPassword()));
         return save(person);
     }
 
+    private String encodePassword(String password){
+        return passwordEncoder.encode(password);
+    }
 
     private void addBasket(Person person){
         person.addBasket(new Basket());

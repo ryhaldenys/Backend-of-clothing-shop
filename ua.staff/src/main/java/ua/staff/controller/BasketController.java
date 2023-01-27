@@ -2,6 +2,7 @@ package ua.staff.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ua.staff.builder.UriBuilder;
 import ua.staff.dto.BasketDto;
@@ -11,58 +12,64 @@ import ua.staff.service.BasketService;
 import static ua.staff.generator.ResponseEntityGenerator.getResponseEntityWithNoContent;
 
 @RestController
-@RequestMapping("/people/{person_id}/basket")
+@RequestMapping("/api/people/{person_id}/basket")
 @RequiredArgsConstructor
 public class BasketController {
     private final BasketService basketService;
 
     @GetMapping
-    public BasketDto getBasket(@PathVariable Long person_id){
-        return basketService.getBasketElements(person_id);
+    @PreAuthorize("hasAuthority('advanced') or authentication.principal.id == #id")
+    public BasketDto getBasket(@PathVariable("person_id") Long id){
+        return basketService.getBasketElements(id);
     }
 
     @PostMapping("/{clothes_id}")
+    @PreAuthorize("hasAuthority('simple') and authentication.principal.id == #id")
     public ResponseEntity<Void> addToBasket(
-            @PathVariable Long person_id,
-            @PathVariable("clothes_id")Long clothes_id, @RequestBody Size size){
+            @PathVariable("person_id") Long id,
+            @PathVariable("clothes_id")Long clothesId, @RequestBody Size size){
 
-        basketService.addClothesToBasket(person_id,clothes_id,size);
-        var location = UriBuilder.createUriFromCurrentServletMapping("/people/{p_id}/basket",person_id);
+        basketService.addClothesToBasket(id,clothesId,size);
+        var location = UriBuilder.createUriFromCurrentServletMapping("/people/{p_id}/basket",id);
         return getResponseEntityWithNoContent(location);
     }
 
     @DeleteMapping("/{chose_clothes_id}")
-    public ResponseEntity<Void> removeChoseClothes(@PathVariable("person_id")Long personId,
+    @PreAuthorize("authentication.principal.id == #id")
+    public ResponseEntity<Void> removeChoseClothes(@PathVariable("person_id")Long id,
             @PathVariable("chose_clothes_id")Long choseClothesId){
 
         basketService.removeChoseClothesById(choseClothesId);
 
-        var location = UriBuilder.createUriFromCurrentServletMapping("/people/{p_id}/basket",personId);
+        var location = UriBuilder.createUriFromCurrentServletMapping("/people/{p_id}/basket",id);
         return getResponseEntityWithNoContent(location);
     }
 
-    @PatchMapping("/{chose_clothes_id}")
+    @PatchMapping("/{chose_cl_id}")
+    @PreAuthorize("authentication.principal.id == #id")
     public ResponseEntity<Void> updateAmountOfClothes(
-            @RequestBody Size size, @PathVariable Long person_id,@PathVariable Long chose_clothes_id){
+            @RequestBody Size size, @PathVariable("person_id") Long id,@PathVariable("chose_cl_id") Long choseClId){
 
-        basketService.updateAmountOfClothes(chose_clothes_id,person_id,size);
+        basketService.updateAmountOfClothes(choseClId,id,size);
 
-        var location = UriBuilder.createUriFromCurrentServletMapping("/people/{p_id}/basket",person_id);
+        var location = UriBuilder.createUriFromCurrentServletMapping("/people/{p_id}/basket",id);
         return getResponseEntityWithNoContent(location);
     }
 
     @PatchMapping
-    public ResponseEntity<Void> addPersonBonuses(@PathVariable("person_id") Long personId){
-        basketService.addBonuses(personId);
+    @PreAuthorize("authentication.principal.id == #id")
+    public ResponseEntity<Void> addPersonBonuses(@PathVariable("person_id") Long id){
+        basketService.addBonuses(id);
 
         var location = UriBuilder.createUriFromCurrentRequest();
         return getResponseEntityWithNoContent(location);
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> removePersonBonuses(@PathVariable("person_id") Long personId){
+    @PreAuthorize("authentication.principal.id == #id")
+    public ResponseEntity<Void> removePersonBonuses(@PathVariable("person_id") Long id){
 
-        basketService.removePersonBonuses(personId);
+        basketService.removePersonBonuses(id);
 
         var location = UriBuilder.createUriFromCurrentRequest();
         return getResponseEntityWithNoContent(location);
