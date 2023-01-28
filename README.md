@@ -11,7 +11,7 @@
 ## About project
 
 This project is backend of clothing store where users can log in or register and get data in JSON format.
-In this project user can have ADMIN, USER or unauthorized user.
+In this project user can have ADMIN, USER or unauthorized user role.
 
 <hr>
 Unauthorized user can:
