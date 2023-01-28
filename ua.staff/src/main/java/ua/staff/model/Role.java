@@ -1,17 +1,27 @@
 package ua.staff.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-import lombok.*;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-@Embeddable
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(of = "name")
-public class Role {
+import java.util.Set;
+import java.util.stream.Collectors;
 
-    @Column(nullable = false)
-    private String name;
+public enum Role {
+    USER(Set.of(Permission.SIMPLE)),
+    ADMIN(Set.of(Permission.ADVANCED,Permission.SIMPLE));
+
+    private final Set<Permission> permissions;
+
+    Role(Set<Permission> permissions) {
+        this.permissions = permissions;
+    }
+
+    public Set<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public Set<SimpleGrantedAuthority> getAuthorities(){
+        return getPermissions().stream()
+                .map(permission -> new SimpleGrantedAuthority(permission.getPermission()))
+                .collect(Collectors.toSet());
+    }
 }

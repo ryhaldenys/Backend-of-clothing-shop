@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ua.staff.builder.UriBuilder;
 import ua.staff.dto.ClothesDto;
@@ -24,7 +25,7 @@ import static ua.staff.generator.ResponseEntityGenerator.getResponseEntity;
 import static ua.staff.generator.ResponseEntityGenerator.getResponseEntityWithNoContent;
 
 @RestController
-@RequestMapping("/clothes")
+@RequestMapping("/api/clothes")
 @RequiredArgsConstructor
 public class ClothesController {
     private final ClothesService clothesService;
@@ -41,6 +42,7 @@ public class ClothesController {
 
 
     @PostMapping
+    @PreAuthorize("hasAuthority('advanced')")
     public ResponseEntity<Clothes> saveClothes(@RequestBody Clothes clothes){
         clothesService.saveClothes(clothes);
 
@@ -49,6 +51,7 @@ public class ClothesController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('advanced')")
     public ResponseEntity<Void> deleteClothesById(@PathVariable("id")Long id){
         clothesService.deleteClothesById(id);
 
@@ -57,6 +60,7 @@ public class ClothesController {
     }
 
     @PostMapping("/{id}/image")
+    @PreAuthorize("hasAuthority('advanced')")
     public ResponseEntity<Void> addImage(@PathVariable Long id, @RequestBody Image image){
 
         clothesService.addImage(id,image);
@@ -66,6 +70,7 @@ public class ClothesController {
     }
 
     @DeleteMapping("/{id}/image")
+    @PreAuthorize("hasAuthority('advanced')")
     public ResponseEntity<Void> removeImage(@PathVariable Long id, @RequestBody Image image){
 
         clothesService.removeImage(id,image);
@@ -75,6 +80,7 @@ public class ClothesController {
     }
 
     @PostMapping("/{id}/size")
+    @PreAuthorize("hasAuthority('advanced')")
     public ResponseEntity<Void> addSize(@PathVariable Long id, @RequestBody Size size){
 
         clothesService.addSize(id,size);
@@ -84,6 +90,7 @@ public class ClothesController {
     }
 
     @DeleteMapping("/{id}/size")
+    @PreAuthorize("hasAuthority('advanced')")
     public ResponseEntity<Void> removeSize(@PathVariable Long id, @RequestBody Size size){
 
         clothesService.removeSize(id,size);
@@ -95,4 +102,7 @@ public class ClothesController {
     private URI buildClothesLocation(Long id) {
         return UriBuilder.createUriFromCurrentServletMapping("clothes/" + id);
     }
+
+    //todo: add checkout sizes and images isPresent
+    //todo: findByArticle
 }

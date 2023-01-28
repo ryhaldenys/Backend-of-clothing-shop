@@ -3,24 +3,25 @@ package ua.staff.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.staff.builder.PersonBuilder;
 import ua.staff.dto.PeopleDto;
 import ua.staff.dto.PersonDto;
-import ua.staff.dto.PersonRolesDto;
+import ua.staff.dto.UserForm;
 import ua.staff.exception.NotFoundException;
 import ua.staff.model.Basket;
 import ua.staff.model.Person;
 import ua.staff.model.PostAddress;
-import ua.staff.model.Role;
-import ua.staff.repository.PersonRepository;
 
-import java.util.List;
+import ua.staff.repository.PersonRepository;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PersonService {
+    private final BCryptPasswordEncoder passwordEncoder;
     private final PersonRepository personRepository;
 
 
@@ -40,25 +41,14 @@ public class PersonService {
     }
 
 
-    public PersonRolesDto getPersonById(Long id){
-        return getPersonRolesDto(id);
-    }
 
-    private PersonRolesDto getPersonRolesDto(Long id) {
-        var personDto = getPersonDtoById(id);
-        var roles = getPersonRoles(id);
-        return createPersonRolesDto(personDto,roles);
+    public PersonDto getPersonById(Long id){
+        return getPersonDtoById(id);
     }
 
     private PersonDto getPersonDtoById(Long id){
         return personRepository.findPersonDtoById(id)
                 .orElseThrow(()->new NotFoundException("Cannot find person by id:"+id));
-    }
-    private List<Role> getPersonRoles(Long id){
-        return personRepository.findPersonRolesById(id);
-    }
-    private PersonRolesDto createPersonRolesDto(PersonDto person, List<Role> roles){
-        return new PersonRolesDto(person,roles);
     }
 
 
@@ -76,16 +66,37 @@ public class PersonService {
     private void updatePerson(Person foundPerson, Person person) {
         foundPerson.setFirstName(person.getFirstName());
         foundPerson.setLastName(person.getLastName());
-        foundPerson.setNumberPhone(person.getNumberPhone());
+        foundPerson.setEmail(person.getEmail());
         foundPerson.setPostAddress(person.getPostAddress());
     }
 
 
     @Transactional
-    public Person savePerson(Person person) {
-        //todo: encrypt password
-        addBasket(person);
+    public Person savePerson(UserForm user) {
+        var person = createPerson(user);
         return save(person);
+    }
+
+    private Person createPerson(UserForm user) {
+        var person = PersonBuilder.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .password(encodePassword(user.getPassword()))
+                .build();
+        addBasket(person);
+        return person;
+    }
+
+
+    @Transactional
+    public Person savePerson(Person person) {
+        person.setPassword(encodePassword(person.getPassword()));
+        return save(person);
+    }
+
+    private String encodePassword(String password){
+        return passwordEncoder.encode(password);
     }
 
     private void addBasket(Person person){

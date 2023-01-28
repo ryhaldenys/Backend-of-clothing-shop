@@ -97,8 +97,8 @@ public class BasketService {
 
 
     @CacheEvict(value = "basket",key = "#personId")
-    public void updateAmountOfClothes(Long clothesId,Long personId,Size size) {
-        var choseClothes = getChoseClothesByClothesAndPersonIds(clothesId,personId);
+    public void updateAmountOfClothes(Long choseClothesId,Long personId,Size size) {
+        var choseClothes = getChoseClothesByClothesAndPersonIds(choseClothesId,personId);
         var foundSize = getSizeByIdAndSizeType(choseClothes.getClothes().getId(),size.getSize());
 
         checkIsEnoughClothes(foundSize,size.getAmount());
