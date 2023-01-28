@@ -58,15 +58,12 @@ public class BasketRepositoryTest {
     }
 
     private Person createPersonWithBasket(ChoseClothes choseClothes) {
-        List<Role> roles = new ArrayList<>();
-        roles.add(new Role("USER"));
-
         Person person = PersonBuilder.builder()
                 .firstName("firstName")
                 .lastName("lastName")
-                .numberPhone("+38098098765")
+                .email("+38098098765")
                 .password("qwerty")
-                .roles(roles)
+                .role(Role.USER)
                 .bonuses(BigDecimal.valueOf(100))
                 .build();
 
