@@ -30,8 +30,6 @@ public class Basket {
     @ColumnDefault("0")
     private BigDecimal usedBonuses = BigDecimal.ZERO;
 
-    private BigDecimal totalPrice;
-
     @Setter(AccessLevel.PRIVATE)
     @OneToMany(mappedBy = "basket",cascade = CascadeType.ALL)
     private List<ChoseClothes> choseClothes = new ArrayList<>();
