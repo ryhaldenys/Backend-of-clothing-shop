@@ -57,7 +57,8 @@ public class OrderService {
 
     @Caching(evict = {
             @CacheEvict(value = "person_orders",key = "#personId"),
-            @CacheEvict(value = "all_orders",allEntries = true)})
+            @CacheEvict(value = "all_orders",allEntries = true),
+            @CacheEvict(value = "basket",key = "#personId")})
     public void createOrder(Long personId, Delivery delivery){
         var person = getPersonFetchBasketAndChoseClothesById(personId);
         var order =  createOrder(person,delivery);

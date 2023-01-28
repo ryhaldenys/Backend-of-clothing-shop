@@ -30,7 +30,7 @@ public interface PersonRepository extends JpaRepository<Person,Long> {
     @Query("select p from Person p left join fetch p.basket where p.id = ?1")
     Optional<Person> findPersonFetchBasketById(Long personId);
 
-    @Query("select p from Person p left join fetch p.basket b left join fetch b.choseClothes where p.id = ?1")
+    @Query("select distinct p from Person p left join fetch p.basket b left join fetch b.choseClothes where p.id = ?1")
     Optional<Person> findPersonFetchBasketAndChoseClothesById(Long personId);
 
     @Query("select p.postAddress from Person p where p.id=?1")

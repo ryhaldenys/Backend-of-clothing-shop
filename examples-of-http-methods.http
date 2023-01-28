@@ -226,8 +226,8 @@ Cookie: your copied cookies
 
 #Create order by personId = 1
 # AUTHORITIES - USER,ADMIN
-POST http://localhost:8080/api/people/orders
-Cookie: your copied cookies
+POST http://localhost:8080/api/people/2/orders
+Cookie: Idea-5574855e=666d4c83-a7cf-4c39-b108-053c5e85193c; JSESSIONID=01FE33F0EC6ED25B71A0C57A15CAA73A
 Content-Type: application/json
 
 #Body
