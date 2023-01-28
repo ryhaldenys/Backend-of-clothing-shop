@@ -86,7 +86,7 @@ STEP 2: Click on Get from VSC > Paste The Repository Url as: <br><code>https://g
 STEP 3: Go inside src/main/resources > application-dev.properties and update the value of database details as per your usage, like spring.datasource.url,spring.datasource.password and spring.datasource.username according to your installed postgresql admin user credentials. <br>
 STEP 4: Go inside src/main/java/ua.staff than open StaffApplication class and run project.<br>
 STEP 5: Check Running The Site At http://localhost:8083/api/clothes <br>
-STEP 6: Default Email, Password And Id For Admin Is admin@gmail.com, adminadmin And 2
-STEP 6: Default Email, Password And Id For Admin Is user@gmail.com, useruser And 1 
+STEP 6: Default Email, Password And Id For Admin Is admin@gmail.com, adminadmin And 2 <br>
+STEP 7: Default Email, Password And Id For Admin Is user@gmail.com, useruser And 1 
 
 
