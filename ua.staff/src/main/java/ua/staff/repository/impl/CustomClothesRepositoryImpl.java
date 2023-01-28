@@ -32,21 +32,21 @@ public class CustomClothesRepositoryImpl implements CustomClothesRepository {
     }
 
     @Override
-    public Slice<Clothes> findClothesFetchImagesAndSizesBySexAndType(String sex, String subType, Pageable pageable) {
-        var clothes = findAllFetchSizesBySexAndType(sex,subType);
+    public Slice<Clothes> findClothesFetchImagesAndSizesBySexAndType(String sex, String type, Pageable pageable) {
+        var clothes = findAllFetchSizesBySexAndType(sex,type);
         clothes = findAllFetchImagesByClothes(clothes);
         return mapToPage(pageable,clothes);
     }
 
     private List<Clothes> findAllFetchSizesBySexAndSubType(String sex, String subType){
-        var query = "select c from Clothes c left join fetch c.sizes where c.sex =?1 and c.subType =?2";
+        var query = "select c from Clothes c left join fetch c.sizes where c.sex =?1 and c.subtype =?2";
         return createQuery(query,sex,subType);
     }
 
 
     @Override
-    public Slice<Clothes> findClothesFetchImagesAndSizesBySexAndSubType(String sex,String type, Pageable pageable) {
-        var clothes = findAllFetchSizesBySexAndSubType(sex,type);
+    public Slice<Clothes> findClothesFetchImagesAndSizesBySexAndSubType(String sex,String subtype, Pageable pageable) {
+        var clothes = findAllFetchSizesBySexAndSubType(sex,subtype);
         clothes = findAllFetchImagesByClothes(clothes);
         return mapToPage(pageable,clothes);
     }

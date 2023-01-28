@@ -1,0 +1,268 @@
+
+# Get all clothes by default sex = male
+# AUTHORITIES - unregistered user, USER or ADMIN
+GET http://localhost:8080/api/clothes
+
+###
+
+# Get all clothes by sex = female
+# AUTHORITIES - unregistered user, USER or ADMIN
+GET http://localhost:8080/api/clothes?sex=female
+
+###
+
+# Get all clothes by type = accessories
+# AUTHORITIES - unregistered user, USER or ADMIN
+GET http://localhost:8080/api/clothes?type=accessories
+
+###
+
+# Get all clothes by subtype = socks,
+# AUTHORITIES - unregistered user, USER or ADMIN
+GET http://localhost:8080/api/clothes?subtype=socks
+
+###
+
+# Get clothes by id = 1
+# AUTHORITIES - unregistered user, USER or ADMIN
+GET http://localhost:8080/api/clothes/1
+
+###
+
+#If you want run methods like a register user or an admin you should:
+# 1 - run in chrome or other browser http://localhost:8080/auth/login to login or http://localhost:8080/auth/registration to register new account
+# 2 - then enter button f12 and open developer menu, сhoose network and open request, than find coockie and copy it.
+# 3 - in requests below paste your own cookies.
+# 4 - GET methods you can run in browser without copying cookies
+###
+
+#Save clothes
+# AUTHORITIES - ADMIN
+POST http://localhost:8080/api/clothes
+Cookie: your copied cookies
+Content-Type: application/json
+
+{
+  #Clothes body
+}
+
+###
+
+#Delete clothes by id =1
+# AUTHORITIES - ADMIN
+DELETE http://localhost:8080/api/clothes/1
+Cookie: your copied cookies
+
+###
+
+#Add and remove imaget to clothes by id =1
+# AUTHORITIES - ADMIN
+POST http://localhost:8080/api/clothes/1/image
+Cookie: your copied cookies
+Content-Type: application/json
+
+{
+  #Image body
+}
+###
+DELETE http://localhost:8080/api/clothes/1/image
+Cookie: your copied cookies
+Content-Type: application/json
+
+{
+  #Image body
+}
+
+###
+
+#Add and remove sizes to clothes by id =1
+# AUTHORITIES - ADMIN
+POST http://localhost:8080/api/clothes/1/size
+Cookie: your copied cookies
+Content-Type: application/json
+
+{
+  #Size body
+}
+###
+DELETE http://localhost:8080/api/clothes/1/size
+Cookie: your copied cookies
+Content-Type: application/json
+
+{
+  #Size body
+}
+
+
+###
+
+#Delete clothes by id =1
+# AUTHORITIES - ADMIN
+DELETE http://localhost:8080/api/clothes/1
+Cookie: your copied cookies
+
+###
+
+#Get all users
+# AUTHORITIES - ADMIN
+GET http://localhost:8080/api/people
+Cookie: your copied cookies
+
+
+###
+
+#Get user by id = 1
+# AUTHORITIES - ADMIN - can get all ysers by id, USER can get only your data
+GET http://localhost:8080/api/people/1
+Cookie: your copied cookies
+
+###
+
+#Save user
+# AUTHORITIES - ADMIN
+POST http://localhost:8080/api/people
+Cookie: your copied cookies
+Content-Type: application/json
+
+#Body
+{
+  "firstName": "user",
+  "lastName" : "user",
+  "email": "user@gmail.com",
+  "password": "new-user",
+  "status": "ACTIVE",
+  "role": "USER",
+  "postAddress": {
+    "city": "city",
+    "postOffice": "streetName street 12, office №1"
+  }
+}
+
+###
+
+#Delete user by id = 1
+# AUTHORITIES - ADMIN can delete all acounts, USER can delete only your account
+DELETE http://localhost:8080/api/people/1
+Cookie: your copied cookies
+
+###
+
+#Get post address of user by id = 1
+# AUTHORITIES - ADMIN can adresses of all acounts, USER can get address only of your account
+GET http://localhost:8080/api/people/1/address
+Cookie: your copied cookies
+
+###
+
+#Get basket contents by user id = 1
+# AUTHORITIES - ADMIN can get basket contents of all acounts, USER can get basket content only of your account
+GET http://localhost:8080/api/people/1/basket
+Cookie: your copied cookies
+
+###
+
+#Add clothes to basket by personId = 1 and clothes id = 2
+# AUTHORITIES - USER,ADMIN
+POST http://localhost:8080/api/people/1/basket/2
+Cookie: your copied cookies
+Content-Type: application/json
+
+#Body
+{
+  "size": "XS",
+  "amount": 1
+}
+
+###
+
+#Remove chose clothes by person id = 1 and chose clothes id = 2
+# AUTHORITIES - USER,ADMIN
+DELETE http://localhost:8080/api/people/1/basket/2
+Cookie: your copied cookies
+
+###
+
+#Update amount of clothes in basket by personId = 1 and chose clothes id = 2
+# AUTHORITIES - USER,ADMIN
+PATCH http://localhost:8080/api/people/1/basket/2
+Cookie: your copied cookies
+Content-Type: application/json
+
+#Body
+{
+  "size": "XS",
+  "amount": 12
+}
+
+###
+
+#Add person bonuses to basket by personId = 1
+# AUTHORITIES - USER,ADMIN
+PATCH http://localhost:8080/api/people/1
+Cookie: your copied cookies
+
+###
+
+#Delele person bonuses to basket by personId = 1
+# AUTHORITIES - USER,ADMIN
+DELETE http://localhost:8080/api/people/1
+Cookie: your copied cookies
+
+###
+
+#Get all ordrs by personId = 1
+# AUTHORITIES - USER,ADMIN
+GET http://localhost:8080/api/people/orders
+Cookie: your copied cookies
+
+###
+
+#Get order by personId = 1 and order id = 2
+# AUTHORITIES - USER,ADMIN
+GET http://localhost:8080/api/people/orders/2
+Cookie: your copied cookies
+
+###
+
+#Create order by personId = 1
+# AUTHORITIES - USER,ADMIN
+POST http://localhost:8080/api/people/orders
+Cookie: your copied cookies
+Content-Type: application/json
+
+#Body
+{
+  "address":"address",
+  "deliveryPrice": 100,
+  "deliveryType": "Newpost, courier delivery",
+  "paymentKind": "after payment"
+}
+###
+
+#Set status canceled by personId = 1 and ordersId=2
+# AUTHORITIES - USER,ADMIN
+PATCH http://localhost:8080/api/people/orders/2/canceled
+Cookie: your copied cookies
+
+###
+
+#Set status received by personId = 1 and ordersId=2
+# AUTHORITIES - ADMIN
+PATCH http://localhost:8080/api/people/orders/2/received
+Cookie: your copied cookies
+
+###
+
+#Get all orders
+# AUTHORITIES - ADMIN
+GET http://localhost:8080/api/orders
+Cookie: your copied cookies
+
+###
+
+#Get order by  order id = 1
+# AUTHORITIES - ADMIN
+GET http://localhost:8080/api/orders/1
+Cookie: your copied cookies
+
+###

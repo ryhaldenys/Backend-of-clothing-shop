@@ -15,7 +15,8 @@ import static java.math.BigDecimal.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode(of = "numberPhone")
+@EqualsAndHashCode(of = "email")
+@AllArgsConstructor
 @Entity
 public class Person {
     @Id
@@ -32,16 +33,17 @@ public class Person {
     private String password;
 
     @Column(nullable = false, unique = true)
-    private String numberPhone;
+    private String email;
 
     @Column(nullable = false)
     private LocalDateTime created_at = LocalDateTime.now();
 
-    @ElementCollection
-    @CollectionTable(name = "person_roles",
-            joinColumns = @JoinColumn(name = "person_id", nullable = false),
-            indexes = @Index(name = "person_roles_person_id_idx", columnList = "person_id"))
-    private List<Role> roles = new ArrayList<>();
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Column(nullable = false)
+    private String status;
 
     @Embedded
     private PostAddress postAddress;

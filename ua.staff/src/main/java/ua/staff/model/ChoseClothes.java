@@ -1,6 +1,7 @@
 package ua.staff.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "chose_clothes",
         indexes ={@Index(name = "chose_clothes_basket_id",columnList = "basket_id")
@@ -27,7 +29,7 @@ public class ChoseClothes {
     private String sizeKind;
 
 
-    @ManyToOne(optional = false,fetch = FetchType.LAZY)
+    @ManyToOne(optional = false,fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
     @JoinColumn(name = "clothes_id")
     private Clothes clothes;
 

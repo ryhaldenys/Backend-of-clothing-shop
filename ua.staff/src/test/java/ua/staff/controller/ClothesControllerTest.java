@@ -3,33 +3,27 @@ package ua.staff.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-
-
 import org.junit.jupiter.api.Test;
-
-import org.mockito.BDDMockito;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
 import org.springframework.data.domain.PageImpl;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import org.springframework.test.web.servlet.MockMvc;
+
 import ua.staff.dto.ClothesDetailsDto;
 import ua.staff.dto.ClothesDto;
 import ua.staff.dto.FullClothesDto;
-
-import ua.staff.exception.NotFoundException;
 import ua.staff.generator.ClothesGenerator;
 import ua.staff.model.Clothes;
 import ua.staff.model.ClothesRequestParams;
 import ua.staff.model.Image;
 import ua.staff.model.Size;
-import ua.staff.repository.ClothesRepository;
 import ua.staff.service.ClothesService;
 
 import java.math.BigDecimal;
@@ -43,14 +37,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
+@WithMockUser
 @WebMvcTest(ClothesController.class)
 public class ClothesControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private ClothesRepository repository;
 
     @MockBean
     private ClothesService service;
@@ -102,7 +95,7 @@ public class ClothesControllerTest {
         var clothes = ClothesGenerator.generateClothes(12);
         clothes.setId(1L);
 
-        mockMvc.perform(post("/clothes")
+        mockMvc.perform(post("/clothes").with(csrf())
                         .content(mapToString(clothes))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -118,7 +111,7 @@ public class ClothesControllerTest {
     void deleteClothes() throws Exception{
         //BDDMockito.willThrow(NotFoundException.class).given(service).deleteClothesById(1L);
         //BDDMockito.willThrow(NotFoundException.class);
-        mockMvc.perform(delete("/clothes/1"))
+        mockMvc.perform(delete("/clothes/1").with(csrf()))
                 .andDo(print())
                 .andExpect(r -> assertThat(r.getResponse().getRedirectedUrl())
                         .isEqualTo("http://localhost/clothes"))
