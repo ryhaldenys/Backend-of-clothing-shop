@@ -1,4 +1,4 @@
-# Backend-for-staff-application-simplified-version
+# Backend-of-clothing-shop
 
 <ul>
   <li> A Java Backend project
