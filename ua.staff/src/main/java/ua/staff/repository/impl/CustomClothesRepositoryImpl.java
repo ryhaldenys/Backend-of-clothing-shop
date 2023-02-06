@@ -27,7 +27,7 @@ public class CustomClothesRepositoryImpl implements CustomClothesRepository {
     }
 
     private List<Clothes> findAllLeftJoinFetchSizesBySex(String sex){
-        var query = "select c from Clothes c left join fetch c.sizes where c.sex =?1";
+        var query = "select distinct c from Clothes c left join fetch c.sizes s where c.sex =?1 and s.amount>0";
         return createQuery(query,sex);
     }
 
@@ -39,7 +39,7 @@ public class CustomClothesRepositoryImpl implements CustomClothesRepository {
     }
 
     private List<Clothes> findAllFetchSizesBySexAndSubType(String sex, String subType){
-        var query = "select c from Clothes c left join fetch c.sizes where c.sex =?1 and c.subtype =?2";
+        var query = "select distinct c from Clothes c left join fetch c.sizes s where c.sex =?1 and c.subtype =?2 and s.amount>0";
         return createQuery(query,sex,subType);
     }
 
@@ -52,7 +52,7 @@ public class CustomClothesRepositoryImpl implements CustomClothesRepository {
     }
 
     private List<Clothes> findAllFetchSizesBySexAndType(String sex,String type){
-        var query = "select c from Clothes c left join fetch c.sizes where c.sex =?1 and c.type=?2";
+        var query = "select distinct c from Clothes c left join fetch c.sizes s where c.sex =?1 and c.type=?2 and s.amount>0";
         return createQuery(query,sex,type);
     }
 

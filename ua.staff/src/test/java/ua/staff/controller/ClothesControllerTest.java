@@ -24,7 +24,7 @@ import ua.staff.model.Clothes;
 import ua.staff.model.ClothesRequestParams;
 import ua.staff.model.Image;
 import ua.staff.model.Size;
-import ua.staff.service.ClothesService;
+import ua.staff.service.impl.ClothesServiceImpl;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -46,7 +46,7 @@ public class ClothesControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private ClothesService service;
+    private ClothesServiceImpl service;
 
     @Test
     void getAllTest() throws Exception {

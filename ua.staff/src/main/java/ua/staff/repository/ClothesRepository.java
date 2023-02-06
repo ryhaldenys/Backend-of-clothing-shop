@@ -14,7 +14,7 @@ import java.util.Set;
 
 public interface ClothesRepository extends JpaRepository<Clothes,Long>,CustomClothesRepository {
 
-    @Query("SELECT c.sizes from Clothes c where c.id = ?1")
+    @Query("SELECT s from Clothes c left join c.sizes s where c.id = ?1 and s.amount > 0")
     Set<Size> findClothesSizesById(Long id);
 
     @Query("SELECT c.images from Clothes c where c.id = ?1")

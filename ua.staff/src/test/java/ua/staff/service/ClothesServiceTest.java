@@ -17,6 +17,7 @@ import ua.staff.model.ClothesRequestParams;
 import ua.staff.model.Image;
 import ua.staff.model.Size;
 import ua.staff.repository.ClothesRepository;
+import ua.staff.service.impl.ClothesServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 public class ClothesServiceTest {
     @Autowired
-    private ClothesService clothesService;
+    private ClothesServiceImpl clothesService;
 
     @Autowired
     private ClothesRepository clothesRepository;
